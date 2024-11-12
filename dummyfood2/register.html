@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Food Ordering System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #000;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .register-container {
+            width: 100%;
+            max-width: 500px;
+            background: #fff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(255,255,255,0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #000;
+            font-size: 24px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        h2:after {
+            content: '';
+            display: block;
+            width: 50px;
+            height: 2px;
+            background: #000;
+            margin: 10px auto;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #000;
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #000;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: #fff;
+            color: #000;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: #000;
+            box-shadow: 0 0 0 2px rgba(0,0,0,0.1);
+            outline: none;
+        }
+
+        .error {
+            background: #fff;
+            color: #000;
+            padding: 10px;
+            border: 2px solid #000;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 14px;
+            display: none;
+        }
+
+        .success {
+            background: #000;
+            color: #fff;
+            padding: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 14px;
+            display: none;
+        }
+
+        .submit-btn {
+            background: #000;
+            color: #fff;
+            padding: 15px;
+            border: 2px solid #000;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            background: #fff;
+            color: #000;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #000;
+            color: #000;
+            font-size: 14px;
+        }
+
+        .login-link a {
+            color: #000;
+            text-decoration: none;
+            font-weight: 600;
+            margin-left: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .loading:after {
+            content: '...';
+            animation: dots 1s steps(5, end) infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60% { content: '...'; }
+            80% { content: '....'; }
+            100% { content: '.....'; }
+        }
+
+        @media (max-width: 480px) {
+            .register-container {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <h2>Register</h2>
+        
+        <div class="error" id="error-message"></div>
+        <div class="success" id="success-message"></div>
+        <div class="loading" id="loading">Processing registration</div>
+
+        <form id="registerForm" action="register.php" method="POST">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" 
+                       id="username"
+                       name="username" 
+                       required 
+                       minlength="3" 
+                       maxlength="50"
+                       placeholder="Choose a username">
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" 
+                       id="email"
+                       name="email" 
+                       required
+                       placeholder="Enter your email">
+            </div>
+
+            <div class="form-group">
+                <label for="full_name">Full Name</label>
+                <input type="text" 
+                       id="full_name"
+                       name="full_name" 
+                       required
+                       placeholder="Enter your full name">
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Phone</label>
+                <input type="tel" 
+                       id="phone"
+                       name="phone" 
+                       required
+                       pattern="[0-9]{10}"
+                       placeholder="Enter your phone number">
+            </div>
+
+            <div class="form-group">
+                <label for="address">Address</label>
+                <textarea id="address"
+                          name="address" 
+                          required 
+                          rows="3"
+                          placeholder="Enter your address"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" 
+                       id="password"
+                       name="password" 
+                       required 
+                       minlength="6"
+                       placeholder="Choose a password">
+            </div>
+
+            <div class="form-group">
+                <label for="confirm_password">Confirm Password</label>
+                <input type="password" 
+                       id="confirm_password"
+                       name="confirm_password" 
+                       required 
+                       minlength="6"
+                       placeholder="Confirm your password">
+            </div>
+
+            <button type="submit" class="submit-btn">Register</button>
+        </form>
+
+        <div class="login-link">
+            Already have an account? <a href="login.html">Login here</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Password validation
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+            
+            if (password !== confirmPassword) {
+                document.getElementById('error-message').textContent = "Passwords do not match!";
+                document.getElementById('error-message').style.display = 'block';
+                return;
+            }
+
+            // Show loading indicator
+            document.getElementById('loading').style.display = 'block';
+            // Hide any existing messages
+            document.getElementById('error-message').style.display = 'none';
+            document.getElementById('success-message').style.display = 'none';
+
+            const formData = new FormData(this);
+
+            fetch('register.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Hide loading indicator
+                document.getElementById('loading').style.display = 'none';
+
+                if (data.success) {
+                    // Show success message
+                    document.getElementById('success-message').textContent = data.message;
+                    document.getElementById('success-message').style.display = 'block';
+                    // Redirect after successful registration
+                    setTimeout(() => {
+                        window.location.href = data.redirect || 'login.html';
+                    }, 2000);
+                } else {
+                    // Show error message
+                    document.getElementById('error-message').textContent = data.message;
+                    document.getElementById('error-message').style.display = 'block';
+                }
+            })
+            .catch(error => {
+                // Hide loading indicator
+                document.getElementById('loading').style.display = 'none';
+                // Show error message
+                document.getElementById('error-message').textContent = 'An error occurred. Please try again.';
+                document.getElementById('error-message').style.display = 'block';
+            });
+        });
+    </script>
+</body>
+</html> 
+ 
