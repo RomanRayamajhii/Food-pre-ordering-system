@@ -381,8 +381,8 @@ select.form-control {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.5);
-    z-index: 1000;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 1050;
 }
 
 .modal.show {
@@ -487,6 +487,33 @@ select.form-control {
         padding: 8px;
     }
 }
+
+/* Add these modal styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 1050;
+}
+
+.modal.show {
+    display: block;
+}
+
+/* Remove the anchor tag styles from close button */
+.modal-footer .btn-secondary {
+    color: #fff;
+    text-decoration: none;
+}
+
+.modal-footer .btn-secondary:hover {
+    color: #fff;
+    text-decoration: none;
+}
 </style>
 
 <!-- Add this JavaScript for modal functionality -->
@@ -497,19 +524,22 @@ document.addEventListener('DOMContentLoaded', function() {
     const modalClosers = document.querySelectorAll('[data-dismiss="modal"]');
 
     modalTriggers.forEach(trigger => {
-        trigger.addEventListener('click', function() {
+        trigger.addEventListener('click', function(e) {
+            e.preventDefault();
             const targetModal = document.querySelector(this.dataset.target);
             if (targetModal) {
-                targetModal.classList.add('show');
+                targetModal.style.display = 'block';
             }
         });
     });
 
+    // Close button functionality
     modalClosers.forEach(closer => {
-        closer.addEventListener('click', function() {
+        closer.addEventListener('click', function(e) {
+            e.preventDefault();
             const modal = this.closest('.modal');
             if (modal) {
-                modal.classList.remove('show');
+                modal.style.display = 'none';
             }
         });
     });
@@ -517,7 +547,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Close modal when clicking outside
     window.addEventListener('click', function(event) {
         if (event.target.classList.contains('modal')) {
-            event.target.classList.remove('show');
+            event.target.style.display = 'none';
         }
     });
 

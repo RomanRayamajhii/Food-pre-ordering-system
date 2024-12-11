@@ -56,15 +56,7 @@ try {
     $_SESSION['email'] = $user['email'];
     $_SESSION['full_name'] = $user['full_name'];
 
-    $update_stmt = $conn->prepare("UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = ?");
-    if ($update_stmt) {
-        $update_stmt->bind_param("i", $user['id']);
-        $update_stmt->execute();
-        $update_stmt->close();
-    } else {
-        error_log("Failed to prepare update statement: " . $conn->error);
-    }
-
+    // Close the main statement and connection
     $stmt->close();
     $conn->close();
 
