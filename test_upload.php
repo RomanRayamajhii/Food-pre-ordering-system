@@ -57,7 +57,14 @@ while ($row = mysqli_fetch_assoc($result)) {
 ?>
 
 <style>
-body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
-h2, h3 { color: #333; }
-code { background: #f8f9fa; padding: 2px 5px; border-radius: 3px; }
+body { font-family: Arial, sans-serif;
+     margin: 20px;
+      line-height: 1.6; 
+}
+h2, h3 { color: #333;
+ }
+code { background: #f8f9fa;
+ padding: 2px 5px;
+  border-radius: 3px; 
+  }
 </style> 
