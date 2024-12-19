@@ -170,19 +170,40 @@ foreach($_SESSION['cart'] as $item_id => $quantity) {
             </div>
 
             <div class="form-group">
-                <label>Delivery Address:</label>
+                <label>Address:</label>
                 <textarea name="address" required></textarea>
             </div>
-
             <div class="form-group">
-                <label>Preferred Time:</label>
-                <select name="delivery_time" required>
-                    <option value="">Select Time</option>
-                    <option value="asap">As Soon As Possible</option>
-                    <option value="1hour">Within 1 Hour</option>
-                    <option value="2hour">Within 2 Hours</option>
-                </select>
-            </div>
+    <label for="preferred_time">Preferred Time:</label>
+    <input type="time" name="delivery_time" id="preferred_time" style="font-size:15px" required>
+    <select id="ampm" name="ampm" style="font-size:15px; width:fit-content" required>
+        <option value="">Select AM/PM</option>
+        <option value="AM">AM</option>
+        <option value="PM">PM</option>
+    </select>
+   
+</div>
+
+<p id="selected_time_display" style="margin-top: 10px; font-weight: bold;"></p>
+
+<button onclick="showCombinedTime(event)">Choose Time</button>
+
+<script>
+function showCombinedTime(event) {
+    event.preventDefault(); // Prevent page reload if using a button
+    const selectedTime = document.getElementById("preferred_time").value;
+    const ampm = document.getElementById("ampm").value;
+    const displayElement = document.getElementById("selected_time_display");
+
+    if (selectedTime && ampm) {
+        const [hours, minutes] = selectedTime.split(':');
+        const formattedTime = `${parseInt(hours) % 12 || 12}:${minutes} ${ampm}`;
+        displayElement.textContent = `You selected: ${formattedTime}`;
+    } else {
+        displayElement.textContent = "Please select both a time and AM/PM.";
+    }
+}
+</script>
 
             <div class="form-group">
                 <label>Comments (Optional):</label>

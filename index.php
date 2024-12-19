@@ -55,9 +55,25 @@ if ($showMenu) {
             <a href="menu.php" class="cta-button">Order Now</a>
         </div>
     </section>
+    <section class="special-hotels">
+    <h2 class="section-title">Our Restaurant</h2>
+        <div class="special-hotel">
+            <img src="./image/nepalese-restaurant.jpg" alt="">
+            <h2>Hotel Everest</h2>
+            <p>Hotel Everest is a Nepalese restaurant located in the heart of Kathmandu. We serve authentic Nepalese cuisine that will leave you wanting more. Our restaurant is known for its friendly staff and excellent service. Come and experience the taste of Nepal at Hotel Everest!</p>
+            <a href="menu.php">View Menu</a>
+        </div>
+        <div class="special-hotel">
+            <img src="./image/hostel.jpg" alt="">
+            <h2>Hotel Koshi</h2>
+            <p>Hotel Everest is a Nepalese restaurant located in the heart of Kathmandu. We serve authentic Nepalese cuisine that will leave you wanting more. Our restaurant is known for its friendly staff and excellent service. Come and experience the taste of Nepal at Hotel Everest!</p>
+            <a href="menu.php">View Menu</a>
+        </div>
+
+    </section>
 
     <!-- Special Menu Section -->
-    <section class="special-menu">
+     <section class="special-menu">
         <div class="container">
             <h2 class="section-title">Special Menu</h2>
             <div class="special-menu-grid">
@@ -75,8 +91,20 @@ if ($showMenu) {
                     while($row = $result->fetch_assoc()): ?>
                         <div class="special-item">
                             <div class="special-item-image">
-                                <img src="uploads/<?php echo htmlspecialchars($row['image']); ?>" 
-                                     alt="<?php echo htmlspecialchars($row['name']); ?>">
+                                <?php
+                                // Construct image path
+                                $image_path = !empty($row['image']) 
+                                    ? "uploads/menu/" . $row['image']
+                                    : "assets/images/default-food.jpg";
+
+                                // Check if file exists, otherwise use default
+                                if (!empty($row['image']) && !file_exists($image_path)) {
+                                    $image_path = "assets/images/default-food.jpg";
+                                }
+                                ?>
+                                <img src="<?php echo htmlspecialchars($image_path); ?>" 
+                                     alt="<?php echo htmlspecialchars($row['name']); ?>"
+                                     onerror="this.src='assets/images/default-food.jpg'">
                             </div>
                             <div class="special-item-content">
                                 <h3><?php echo htmlspecialchars($row['name']); ?></h3>
@@ -86,12 +114,12 @@ if ($showMenu) {
                                 <a href="menu.php" class="view-menu-btn">View Full Menu</a>
                             </div>
                         </div>
-                    <?php endwhile;
+                  <?php endwhile;
                 }
                 ?>
             </div>
         </div>
-    </section>
+    </section> 
 
     <style>
         /* Basic Reset and Global Styles */
@@ -155,14 +183,17 @@ if ($showMenu) {
         /* Hero Section */
         .hero {
             height: 80vh;
-            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('images/hero-bg.jpg');
+            background: url("./image/360_F_324739203_keeq8udvv0P2h1MLYJ0GLSlTBagoXS48.jpg");
+            background-size: cover;
+            background-position: center;
+           background-repeat: no-repeat;
             background-size: cover;
             background-position: center;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
-            color: #fff;
+            color: black;
             margin-top: 60px;
             
         }
@@ -171,6 +202,9 @@ if ($showMenu) {
         .hero-content {
             max-width: 800px;
             padding: 0 20px;
+           
+            text-shadow:rgb(215, 214, 214) 2px 2px 7px;
+           
         }
 
         .hero-content h1 {
@@ -182,7 +216,7 @@ if ($showMenu) {
         .hero-content p {
             font-size: 1.5rem;
             margin-bottom: 30px;
-            color: #eee;
+            color: black;
         }
 
         .cta-button {
@@ -338,6 +372,77 @@ if ($showMenu) {
             border-radius: 50%;
             font-weight: bold;
         }
+        /* hotels css */
+        .special-hotels {
+    text-align: center;
+    background-color: #f9f9f9; /* Light background for contrast */
+    padding: 50px 20px;
+}
+
+.special-hotels h1 {
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+    color: #333; /* Darker color for readability */
+    margin-bottom: 40px;
+    ;
+    position: relative;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+
+}
+
+.special-hotel {
+    display: inline-block; /* Keeps the items inline */
+    width: 300px; /* Adjust the width of each hotel box */
+    margin: 15px;
+    background-color: #ffffff; /* White background for contrast */
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.special-hotel:hover {
+    transform: scale(1.05); /* Slight zoom effect on hover */
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+.special-hotel img {
+    width: 100%;
+    height: auto; /* Ensures the image is responsive */
+    border-bottom: 2px solid #ddd;
+}
+
+.special-hotel h2 {
+    font-size: 1.5rem;
+    margin: 15px 0;
+    color: #444;
+}
+
+.special-hotel p {
+    font-size: 1rem;
+    margin: 10px 15px;
+    color: #666; /* Slightly lighter color for text */
+    line-height: 1.5;
+}
+
+.special-hotel a {
+    display: inline-block;
+    margin: 15px 0 20px;
+    padding: 10px 20px;
+    background-color:rgb(0, 0, 0); /* Green button */
+    color: #fff; /* White text */
+    text-decoration: none;
+    border-radius: 1px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.special-hotel a:hover {
+    background-color:rgb(255, 255, 255); /* Darker green on hover */
+    color: #000;
+    border:2px solid #000;
+}
 
         /* Responsive Design */
         @media (max-width: 768px) {
