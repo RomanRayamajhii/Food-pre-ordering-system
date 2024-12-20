@@ -1,14 +1,12 @@
+
 <?php
 session_start();
-
-
+include 'includes/header.php';
 include 'includes/config.php';
 
-// Check if user is logged in and is admin
-if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
-    exit();
-}
+// Enable error reporting for debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
 // Fetch menu items with their categories using the view we created
 $query = "SELECT 
@@ -29,10 +27,7 @@ $result = mysqli_query($conn, $query);
 $categories_query = "SELECT * FROM categories WHERE status = TRUE";
 $categories_result = mysqli_query($conn, $categories_query);
 
-
-
-?>
-
+?> 
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -180,67 +175,6 @@ $categories_result = mysqli_query($conn, $categories_query);
             </tbody>
         </table>
     </div>
-
-    <!-- Add Item Modal -->
-    <div class="modal fade" id="addItemModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Add New Menu Item</h5>
-                    <button type="button" class="close" data-dismiss="modal">
-                        <span>&times;</span>
-                    </button>
-                </div>
-                <form action="menu_actions.php" method="POST" enctype="multipart/form-data" id="addItemForm">
-                    <div class="modal-body">
-                        <input type="hidden" name="action" value="add">
-                        
-                        <div class="form-group">
-                            <label>Name *</label>
-                            <input type="text" class="form-control" name="name" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Category *</label>
-                            <select class="form-control" name="category_id" required>
-                                <option value="">Select Category</option>
-                                <?php 
-                                $cat_query = "SELECT * FROM categories WHERE status = 1";
-                                $cat_result = mysqli_query($conn, $cat_query);
-                                while ($cat = mysqli_fetch_assoc($cat_result)) : 
-                                ?>
-                                    <option value="<?php echo $cat['id']; ?>">
-                                        <?php echo htmlspecialchars($cat['name']); ?>
-                                    </option>
-                                <?php endwhile; ?>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Price (Rs.) *</label>
-                            <input type="number" step="0.01" class="form-control" name="price" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Description</label>
-                            <textarea class="form-control" name="description" rows="3"></textarea>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Image</label>
-                            <input type="file" class="form-control-file" name="image" accept="image/*">
-                            <small class="form-text text-muted">Accepted formats: JPG, JPEG, PNG, GIF</small>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Add Item</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
     <!-- Edit Item Modal -->
     <div class="modal fade" id="editItemModal" tabindex="-1">
         <div class="modal-dialog">
@@ -284,13 +218,11 @@ $categories_result = mysqli_query($conn, $categories_query);
                             <label>Description</label>
                             <textarea class="form-control" name="description" rows="3"></textarea>
                         </div>
-
                         <div class="form-group">
                             <label>New Image</label>
                             <input type="file" class="form-control-file" name="image">
                             <small class="form-text text-muted">Leave empty to keep current image</small>
                         </div>
-
                         <div class="form-group">
                             <div class="custom-control custom-switch">
                                 <input type="checkbox" class="custom-control-input" id="statusSwitch" name="status">
@@ -301,12 +233,9 @@ $categories_result = mysqli_query($conn, $categories_query);
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary">Save Changes</button>
-                    </div>
-                </form>
-            </div>
-        </div>
+                    </div>  </form>
+            </div>   </div>
     </div>
-
     <!-- Debug Modal -->
     <div class="modal fade" id="debugModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
@@ -326,7 +255,6 @@ $categories_result = mysqli_query($conn, $categories_query);
                     echo "<strong>Script Path:</strong> " . __FILE__ . "<br>";
                     echo "<strong>Upload Directory:</strong> " . realpath("../uploads/menu") . "<br>";
                     echo "</div>";
-
                     // Upload Directory Status
                     $upload_dir = "../uploads/menu/";
                     echo "<h6 class='text-primary'>Upload Directory Status:</h6>";
@@ -337,7 +265,6 @@ $categories_result = mysqli_query($conn, $categories_query);
                         echo "<strong>Writable:</strong> " . (is_writable($upload_dir) ? "Yes" : "No") . "<br>";
                     }
                     echo "</div>";
-
                     // Files in Upload Directory
                     echo "<h6 class='text-primary'>Files in Upload Directory:</h6>";
                     echo "<div class='ml-3 mb-3'>";
@@ -365,7 +292,6 @@ $categories_result = mysqli_query($conn, $categories_query);
                         echo "<div class='text-danger'>Directory not accessible</div>";
                     }
                     echo "</div>";
-
                     // Database Records
                     echo "<h6 class='text-primary'>Menu Items with Images:</h6>";
                     echo "<div class='ml-3 mb-3'>";
@@ -391,7 +317,6 @@ $categories_result = mysqli_query($conn, $categories_query);
                         echo "<div class='text-muted'>No menu items with images found</div>";
                     }
                     echo "</div>";
-
                     // PHP Configuration
                     echo "<h6 class='text-primary'>PHP Upload Configuration:</h6>";
                     echo "<div class='ml-3'>";
@@ -403,11 +328,8 @@ $categories_result = mysqli_query($conn, $categories_query);
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
+                </div> </div>
+        </div></div>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -434,7 +356,6 @@ $categories_result = mysqli_query($conn, $categories_query);
                 }
             });
         });
-
         // Handle Delete Button Click
         $('.delete-btn').click(function() {
             if (confirm('Are you sure you want to delete this item?')) {
@@ -447,7 +368,6 @@ $categories_result = mysqli_query($conn, $categories_query);
                 form.submit();
             }
         });
-
         // Handle Restore Button Click
         $('.restore-btn').click(function() {
             if (confirm('Are you sure you want to restore this item?')) {
@@ -521,4 +441,4 @@ $categories_result = mysqli_query($conn, $categories_query);
     }
     </script>
 </body>
-</html>
+</html> 

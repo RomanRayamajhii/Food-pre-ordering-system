@@ -34,8 +34,9 @@ if (!isset($_SESSION['admin_logged_in'])) {
                     <a class="nav-link" href="manage_orders.php">Orders</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="manage_menu.php">Menu</a>
+                    <a class="nav-link" href="manage_menus.php">Menu</a>
                 </li>
+               
             </ul>
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">

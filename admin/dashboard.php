@@ -28,10 +28,19 @@ include 'includes/header.php'; ?>
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title"><i class="fas fa-utensils"></i> Update Menu</h5>
                     <p class="card-text flex-grow-1">View and manage menu items and categories</p>
-                    <a href="manage_menu.php" class="btn btn-light mt-auto">Go to Menu</a>
+                    <a href="manage_menus.php" class="btn btn-light mt-auto">Go to Menu</a>
                 </div>
             </div>
         </div>
+        <div class="col-md-4">
+    <div class="card text-white bg-warning mb-3 h-100">
+        <div class="card-body d-flex flex-column">
+            <h5 class="card-title"><i class="fas fa-tags"></i> Manage Categories</h5>
+            <p class="card-text flex-grow-1">Add, edit, or remove categories for menu items.</p>
+            <a href="manage_categories.php" class="btn btn-light mt-auto">Go to Categories</a>
+        </div>
+    </div>
+</div>
     </div>
 </div>
 
