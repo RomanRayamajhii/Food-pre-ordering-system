@@ -44,6 +44,24 @@ function getStatusBadgeClass($status) {
             return 'status-secondary';
     }
 }
+// Handle delete action
+if(isset($_GET['delete'])) {
+    $order_id = mysqli_real_escape_string($conn, $_GET['delete']);
+    
+    // First delete from order_items
+    $delete_items = "DELETE FROM order_items WHERE order_id = '$order_id'";
+    mysqli_query($conn, $delete_items);
+    
+    // Then delete the order
+    $delete_order = "DELETE FROM orders WHERE id = '$order_id'";
+    if(mysqli_query($conn, $delete_order)) {
+        // echo "<script>alert('Order deleted successfully!'); window.location.href='manage_orders.php';</script>";
+        $_SESSION['success_message'] = "Deleted Order Id '$order_id' successfully!";
+    
+    } else {
+        echo "<script>alert('Error deleting order!'); window.location.href='manage_orders.php';</script>";
+    }
+}
 
 // Fetch orders
 $query = "SELECT o.*, u.username, u.email, u.phone 
@@ -55,6 +73,7 @@ $result = mysqli_query($conn, $query);
 if (!$result) {
     die("Query failed: " . mysqli_error($conn));
 }
+
 ?>
 
 <!-- Main Content -->
@@ -121,7 +140,7 @@ if (!$result) {
                                 <!-- Update Status Form -->
                                 <form method="POST" class="d-inline">
                                     <input type="hidden" name="order_id" value="<?php echo $row['id']; ?>">
-                                    <select name="new_status" class="form-control form-control-sm d-inline-block" style="width: auto;">
+                                    <select name="new_status" class="form-control form-control-sm d-inline-block" >
                                         <option value="pending" <?php echo (strtolower($row['status']) == 'pending') ? 'selected' : ''; ?>>Pending</option>
                                         <option value="confirmed" <?php echo (strtolower($row['status']) == 'confirmed') ? 'selected' : ''; ?>>Confirmed</option>
                                         <option value="preparing" <?php echo (strtolower($row['status']) == 'preparing') ? 'selected' : ''; ?>>Preparing</option>
@@ -243,6 +262,52 @@ while ($row = mysqli_fetch_assoc($result)) :
 </div>
 <?php endwhile; ?>
 
+<!-- Add this JavaScript for modal functionality -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Modal functionality
+    const modalTriggers = document.querySelectorAll('[data-toggle="modal"]');
+    const modalClosers = document.querySelectorAll('[data-dismiss="modal"]');
+
+    modalTriggers.forEach(trigger => {
+        trigger.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetModal = document.querySelector(this.dataset.target);
+            if (targetModal) {
+                targetModal.style.display = 'block';
+            }
+        });
+    });
+    // Close button functionality
+    modalClosers.forEach(closer => {
+        closer.addEventListener('click', function(e) {
+            e.preventDefault();
+            const modal = this.closest('.modal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        });
+    });
+
+    // Close modal when clicking outside
+    window.addEventListener('click', function(event) {
+        if (event.target.classList.contains('modal')) {
+            event.target.style.display = 'none';
+        }
+    });
+
+    // Alert close functionality
+    const alertClosers = document.querySelectorAll('.alert .close');
+    alertClosers.forEach(closer => {
+        closer.addEventListener('click', function() {
+            const alert = this.closest('.alert');
+            if (alert) {
+                alert.style.display = 'none';
+            }
+        });
+    });
+});
+</script>
 <style>
 /* Reset and Base Styles */
 * {
@@ -515,55 +580,5 @@ select.form-control {
     text-decoration: none;
 }
 </style>
-
-<!-- Add this JavaScript for modal functionality -->
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Modal functionality
-    const modalTriggers = document.querySelectorAll('[data-toggle="modal"]');
-    const modalClosers = document.querySelectorAll('[data-dismiss="modal"]');
-
-    modalTriggers.forEach(trigger => {
-        trigger.addEventListener('click', function(e) {
-            e.preventDefault();
-            const targetModal = document.querySelector(this.dataset.target);
-            if (targetModal) {
-                targetModal.style.display = 'block';
-            }
-        });
-    });
-
-    // Close button functionality
-    modalClosers.forEach(closer => {
-        closer.addEventListener('click', function(e) {
-            e.preventDefault();
-            const modal = this.closest('.modal');
-            if (modal) {
-                modal.style.display = 'none';
-            }
-        });
-    });
-
-    // Close modal when clicking outside
-    window.addEventListener('click', function(event) {
-        if (event.target.classList.contains('modal')) {
-            event.target.style.display = 'none';
-        }
-    });
-
-    // Alert close functionality
-    const alertClosers = document.querySelectorAll('.alert .close');
-    alertClosers.forEach(closer => {
-        closer.addEventListener('click', function() {
-            const alert = this.closest('.alert');
-            if (alert) {
-                alert.style.display = 'none';
-            }
-        });
-    });
-});
-</script>
-
-
 
 <?php include 'includes/footer.php'; ?>
