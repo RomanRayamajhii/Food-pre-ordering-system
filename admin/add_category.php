@@ -7,44 +7,74 @@ include 'includes/config.php';
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Check if user is logged in and is admin
-if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
-    exit();
-}
+// // Check if user is logged in and is admin
+// if (!isset($_SESSION['user_id'])) {
+//     header('Location: login.php');
+//     exit();
+// }
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Trim the inputs to remove leading/trailing spaces
     $name = trim($_POST['name']);
     $description = trim($_POST['description']);
     $status = isset($_POST['status']) ? 1 : 0; // Default to active if checked
 
-    // Input validation
-    if (empty($name) || empty($description)) {
-        $_SESSION['error_message'] = "Both name and description are required!";
-        header('Location: manage_categories.php');
-        exit();
-    }
+    // Insert category into the database
+    $sql = "INSERT INTO categories (name, description, status) VALUES (?, ?, ?)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ssi", $name, $description, $status);
 
-    if (strlen($name) < 3 || strlen($name) > 100) {
-        $_SESSION['error_message'] = "Category name must be between 3 and 100 characters!";
-        header('Location: manage_categories.php');
-        exit();
-    }
-
-    // Prepare the SQL statement without bind_param
-    $sql = "INSERT INTO categories (name, description, status) VALUES ('$name', '$description', $status)";
-
-    // Execute the statement
-    if ($conn->query($sql)) {
+    if ($stmt->execute()) {
         $_SESSION['success_message'] = "Category added successfully!";
     } else {
-        $_SESSION['error_message'] = "Error adding category: " . $conn->error;
+        $_SESSION['error_message'] = "Error adding category: " . $stmt->error;
     }
 
-    // Redirect to manage categories page
-    header('Location: manage_categories.php');
+    $stmt->close();
+    header('Location: manage_categories.php'); // Redirect to the same page to show messages
     exit();
 }
 ?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Category</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-4">
+        <h2>Add New Category</h2>
+
+        <?php if (isset($_SESSION['success_message'])): ?>
+            <div class="alert alert-success">
+                <?php echo $_SESSION['success_message']; unset($_SESSION['success_message']); ?>
+            </div>
+        <?php endif; ?>
+
+        <?php if (isset($_SESSION['error_message'])): ?>
+            <div class="alert alert-danger">
+                <?php echo $_SESSION['error_message']; unset($_SESSION['error_message']); ?>
+            </div>
+        <?php endif; ?>
+
+        <form action="add_category.php" method="POST">
+            <div class="form-group">
+                <label for="name">Category Name</label>
+                <input type="text" class="form-control" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+            </div>
+            <div class="form-group form-check">
+                <input type="checkbox" class="form-check-input" id="status" name="status" checked>
+                <label class="form-check-label" for="status">Active</label>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Category</button>
+        </form>
+    </div>
+</body>
+</html>

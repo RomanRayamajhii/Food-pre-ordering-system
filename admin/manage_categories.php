@@ -7,11 +7,6 @@ include 'includes/config.php';
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Check if the user is logged in
-if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
-    exit();
-}
 
 // Handle deletion of a category
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'delete') {
