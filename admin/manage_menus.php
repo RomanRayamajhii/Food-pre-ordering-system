@@ -1,4 +1,3 @@
-
 <?php
 session_start();
 include 'includes/header.php';
@@ -189,12 +188,10 @@ $categories_result = mysqli_query($conn, $categories_query);
                     <div class="modal-body">
                         <input type="hidden" name="action" value="edit">
                         <input type="hidden" name="id" value="">
-                        
                         <div class="form-group">
                             <label>Name *</label>
                             <input type="text" class="form-control" name="name" required>
                         </div>
-
                         <div class="form-group">
                             <label>Category *</label>
                             <select class="form-control" name="category_id" required>
@@ -208,12 +205,10 @@ $categories_result = mysqli_query($conn, $categories_query);
                                 <?php endwhile; ?>
                             </select>
                         </div>
-
                         <div class="form-group">
                             <label>Price *</label>
                             <input type="number" step="0.01" class="form-control" name="price" required>
                         </div>
-
                         <div class="form-group">
                             <label>Description</label>
                             <textarea class="form-control" name="description" rows="3"></textarea>
@@ -233,8 +228,10 @@ $categories_result = mysqli_query($conn, $categories_query);
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary">Save Changes</button>
-                    </div>  </form>
-            </div>   </div>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
     <!-- Debug Modal -->
     <div class="modal fade" id="debugModal" tabindex="-1">
@@ -353,6 +350,9 @@ $categories_result = mysqli_query($conn, $categories_query);
                     $('#editItemModal').find('textarea[name="description"]').val(item.description);
                     $('#editItemModal').find('input[name="status"]').prop('checked', item.status == 1);
                     $('#editItemModal').modal('show');
+                },
+                error: function() {
+                    alert('Error fetching item details.');
                 }
             });
         });
@@ -440,5 +440,63 @@ $categories_result = mysqli_query($conn, $categories_query);
         debugDiv.style.display = debugDiv.style.display === 'none' ? 'block' : 'none';
     }
     </script>
+
+    <!-- Add New Item Modal -->
+    <div class="modal fade" id="addItemModal" tabindex="-1" role="dialog" aria-labelledby="addItemModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addItemModalLabel">Add New Menu Item</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="add_menu.php" method="POST" enctype="multipart/form-data">
+                    <div class="modal-body">
+                        <input type="hidden" name="action" value="add">
+                        <div class="form-group">
+                            <label>Name *</label>
+                            <input type="text" class="form-control" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Category *</label>
+                            <select class="form-control" name="category_id" required>
+                                <?php 
+                                mysqli_data_seek($categories_result, 0);
+                                while ($category = mysqli_fetch_assoc($categories_result)) : 
+                                ?>
+                                    <option value="<?php echo $category['id']; ?>">
+                                        <?php echo htmlspecialchars($category['name']); ?>
+                                    </option>
+                                <?php endwhile; ?>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Price *</label>
+                            <input type="number" step="0.01" class="form-control" name="price" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea class="form-control" name="description" rows="3"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Image</label>
+                            <input type="file" class="form-control-file" name="image" required>
+                        </div>
+                        <div class="form-group">
+                            <div class="custom-control custom-switch">
+                                <input type="checkbox" class="custom-control-input" id="statusSwitch" name="status" checked>
+                                <label class="custom-control-label" for="statusSwitch">Active</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Add Item</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </body>
 </html> 
