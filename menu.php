@@ -344,5 +344,3 @@ function decrementQuantity(button) {
     </script>
 </body>
 </html>
-
-// while quantity increase adding in one only ?

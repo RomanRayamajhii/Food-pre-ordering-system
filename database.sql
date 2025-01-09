@@ -11,7 +11,7 @@ CREATE TABLE  users (
     full_name VARCHAR(100) NOT NULL,
     phone VARCHAR(20) NOT NULL,
     address TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     status ENUM('active', 'blocked') DEFAULT 'active',
      last_login TIMESTAMP NULL
     
@@ -61,5 +61,5 @@ CREATE TABLE  order_items (
     quantity INT NOT NULL,
     price DECIMAL(10,2) NOT NULL,
     FOREIGN KEY (order_id) REFERENCES orders(id),
-    FOREIGN KEY (menu_item_id) REFERENCES menu_items(id)
+    FOREIGN KEY (item_id) REFERENCES menu_items(id)
 );
