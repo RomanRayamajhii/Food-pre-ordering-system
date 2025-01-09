@@ -148,14 +148,30 @@ while($item = $menu_items->fetch_assoc()) {
             gap: 10px;
             align-items: center;
         }
+        .selector {
+        display: flex;
+        align-items: center;
+        }   
 
-        .quantity-input {
-            width: 60px;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            text-align: center;
+    .selector .quantity-btn {
+         padding: 5px;
+        margin: 4px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 18px;
+        background-color: #f0f0f0;
+}
+
+    .selector input {
+        width: 40px;
+        text-align: center;
+        padding: 5px;
+        font-size: 16px;
+        border: 2px solid #ccc;
+        border-radius: 5px;
         }
+
 
         .add-to-cart-btn {
             flex: 1;
@@ -247,7 +263,13 @@ while($item = $menu_items->fetch_assoc()) {
                         <div class="item-price">Rs. <?php echo number_format($item['price'], 2); ?></div>
                         <form class="add-to-cart-form" onsubmit="return addToCart(this, event)">
                             <input type="hidden" name="item_id" value="<?php echo $item['id']; ?>">
-                            <input type="number" name="quantity" value="1" min="1" max="10" class="quantity-input">
+                            
+                            <div class="selector">
+                            <button type="button" class="quantity-btn" onclick="decrementQuantity(this)">-</button>
+                            <input type="number" class="quantity" name="quantity" value="1" min="1" max="10">
+                            <button type="button" class="quantity-btn" onclick="incrementQuantity(this)">+</button>
+                                </div>
+
                             <button type="submit" class="add-to-cart-btn">Add to Cart</button>
                         </form>
                     </div>
@@ -259,7 +281,24 @@ while($item = $menu_items->fetch_assoc()) {
     </div>
 
     <div id="successAlert" class="success-alert">Item added to cart!</div>
+<script>
+    function incrementQuantity(button) {
+    const input = button.parentElement.querySelector('.quantity');
+    const currentValue = parseInt(input.value);
+    if (currentValue < 10) {
+        input.value = currentValue + 1;
+    }
+}
 
+function decrementQuantity(button) {
+    const input = button.parentElement.querySelector('.quantity');
+    const currentValue = parseInt(input.value);
+    if (currentValue > 1) {
+        input.value = currentValue - 1;
+    }
+}
+
+</script>
     <script>
         function filterCategory(category) {
             const tabs = document.querySelectorAll('.category-tab');
@@ -306,3 +345,4 @@ while($item = $menu_items->fetch_assoc()) {
 </body>
 </html>
 
+// while quantity increase adding in one only ?

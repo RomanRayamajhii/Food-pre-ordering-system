@@ -1,10 +1,6 @@
 <?php
 session_start();
 include 'config/db.php';
-
-// Your eSewa Merchant ID
-define('MERCHANT_ID', '9806800001'); // Replace with your eSewa ID
-
 if(!isset($_SESSION['user_id']) || empty($_SESSION['cart'])) {
     header("Location: menu.php");
     exit();
