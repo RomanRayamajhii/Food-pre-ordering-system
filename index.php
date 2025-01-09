@@ -72,55 +72,6 @@ if ($showMenu) {
 
     </section>
 
-    <!-- Special Menu Section -->
-     <section class="special-menu">
-        <div class="container">
-            <h2 class="section-title">Special Menu</h2>
-            <div class="special-menu-grid">
-                <?php
-                // Fetch only special menu items (for example, top 4 items)
-                $sql = "SELECT m.*, c.name as category_name 
-                        FROM menu_items m 
-                        INNER JOIN categories c ON m.category_id = c.id 
-                        WHERE m.status = 1 
-                        ORDER BY RAND() 
-                        LIMIT 4";
-                $result = $conn->query($sql);
-
-                if ($result && $result->num_rows > 0) {
-                    while($row = $result->fetch_assoc()): ?>
-                        <div class="special-item">
-                            <div class="special-item-image">
-                                <?php
-                                // Construct image path
-                                $image_path = !empty($row['image']) 
-                                    ? "uploads/menu/" . $row['image']
-                                    : "assets/images/default-food.jpg";
-
-                                // Check if file exists, otherwise use default
-                                if (!empty($row['image']) && !file_exists($image_path)) {
-                                    $image_path = "assets/images/default-food.jpg";
-                                }
-                                ?>
-                                <img src="<?php echo htmlspecialchars($image_path); ?>" 
-                                     alt="<?php echo htmlspecialchars($row['name']); ?>"
-                                     onerror="this.src='assets/images/default-food.jpg'">
-                            </div>
-                            <div class="special-item-content">
-                                <h3><?php echo htmlspecialchars($row['name']); ?></h3>
-                                <p class="category"><?php echo htmlspecialchars($row['category_name']); ?></p>
-                                <p class="description"><?php echo htmlspecialchars($row['description']); ?></p>
-                                <p class="price">Rs. <?php echo number_format($row['price'], 2); ?></p>
-                                <a href="menu.php" class="view-menu-btn">View Full Menu</a>
-                            </div>
-                        </div>
-                  <?php endwhile;
-                }
-                ?>
-            </div>
-        </div>
-    </section> 
-
     <style>
         /* Basic Reset and Global Styles */
         * {

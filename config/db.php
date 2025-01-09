@@ -1,19 +1,16 @@
 <?php
+// Database connection
 $host = "localhost";
-$username = "root"; // your database username
-$password = ""; // your database password
-$database = "food_ordering"; // your database name
+$username = "root";  // default XAMPP username
+$password = "";      // default XAMPP password
+$database = "food_ordering";  // corrected database name
 
 try {
-    $conn = new mysqli($host, $username, $password, $database);
-    
-    if ($conn->connect_error) {
-        throw new Exception("Connection failed: " . $conn->connect_error);
+    $conn = mysqli_connect($host, $username, $password, $database);
+    if (!$conn) {
+        throw new Exception("Connection failed: " . mysqli_connect_error());
     }
-    
-    $conn->set_charset("utf8mb4");
 } catch (Exception $e) {
-    error_log("Database connection error: " . $e->getMessage());
-    die("Database connection failed");
+    die("Database Connection Error: " . $e->getMessage());
 }
 ?> 

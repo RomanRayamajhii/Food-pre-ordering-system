@@ -1,17 +1,9 @@
 <?php
 session_start();
-include 'includes/header.php';
+include './header.php';
 include 'includes/config.php';
 
-// Enable error reporting for debugging
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
 
-// // Check if user is logged in and is admin
-// if (!isset($_SESSION['user_id'])) {
-//     header('Location: login.php');
-//     exit();
-// }
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {

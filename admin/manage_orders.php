@@ -1,20 +1,15 @@
 <?php
 session_start();
-include 'includes/header.php';
+include './header.php';
 include 'includes/config.php';
 
-// Enable error reporting for debugging
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+
 
 // Handle status update
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
-    $order_id = mysqli_real_escape_string($conn, $_POST['order_id']);
-    $new_status = mysqli_real_escape_string($conn, $_POST['new_status']);
-    
-    // Debug information
-    error_log("Updating order: " . $order_id . " to status: " . $new_status);
-    
+    $order_id =  $_POST['order_id'];
+    $new_status =$_POST['new_status'];
+  
     $update_query = "UPDATE orders SET status = '$new_status' WHERE id = '$order_id'";
     if (mysqli_query($conn, $update_query)) {
         $_SESSION['success_message'] = "Order status updated to '$new_status' successfully!";
@@ -46,7 +41,7 @@ function getStatusBadgeClass($status) {
 }
 // Handle delete action
 if(isset($_GET['delete'])) {
-    $order_id = mysqli_real_escape_string($conn, $_GET['delete']);
+    $order_id =  $_GET['delete'];
     
     // First delete from order_items
     $delete_items = "DELETE FROM order_items WHERE order_id = '$order_id'";
@@ -55,11 +50,11 @@ if(isset($_GET['delete'])) {
     // Then delete the order
     $delete_order = "DELETE FROM orders WHERE id = '$order_id'";
     if(mysqli_query($conn, $delete_order)) {
-        // echo "<script>alert('Order deleted successfully!'); window.location.href='manage_orders.php';</script>";
+        
         $_SESSION['success_message'] = "Deleted Order Id '$order_id' successfully!";
     
     } else {
-        echo "<script>alert('Error deleting order!'); window.location.href='manage_orders.php';</script>";
+        $_SESSION['error_message'] = 'Error deleting order!';
     }
 }
 
@@ -77,27 +72,27 @@ if (!$result) {
 ?>
 
 <!-- Main Content -->
-<div class="container-fluid mt-4">
+<div class="container-fluid">
     <!-- Success/Error Messages -->
     <?php if (isset($_SESSION['success_message'])): ?>
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <div class="alert alert-success" role="alert">
             <?php 
             echo $_SESSION['success_message'];
             unset($_SESSION['success_message']);
             ?>
-            <button type="button" class="close" data-dismiss="alert">
+            <button type="button" class="close">
                 <span>&times;</span>
             </button>
         </div>
     <?php endif; ?>
 
     <?php if (isset($_SESSION['error_message'])): ?>
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <div class="alert alert-error" role="alert">
             <?php 
             echo $_SESSION['error_message'];
             unset($_SESSION['error_message']);
             ?>
-            <button type="button" class="close" data-dismiss="alert">
+            <button type="button" class="close">
                 <span>&times;</span>
             </button>
         </div>
@@ -110,8 +105,8 @@ if (!$result) {
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-bordered table-hover">
-                    <thead class="thead-dark">
+                <table class="table">
+                    <thead >
                         <tr>
                             <th>Order ID</th>
                             <th>Customer</th>
@@ -138,9 +133,9 @@ if (!$result) {
                                
 
                                 <!-- Update Status Form -->
-                                <form method="POST" class="d-inline">
+                                <form method="POST" style="display: inline-block;">
                                     <input type="hidden" name="order_id" value="<?php echo $row['id']; ?>">
-                                    <select name="new_status" class="form-control form-control-sm d-inline-block" >
+                                    <select name="new_status" class="form-control" >
                                         <option value="pending" <?php echo (strtolower($row['status']) == 'pending') ? 'selected' : ''; ?>>Pending</option>
                                         <option value="confirmed" <?php echo (strtolower($row['status']) == 'confirmed') ? 'selected' : ''; ?>>Confirmed</option>
                                         <option value="preparing" <?php echo (strtolower($row['status']) == 'preparing') ? 'selected' : ''; ?>>Preparing</option>
@@ -148,19 +143,19 @@ if (!$result) {
                                         <option value="completed" <?php echo (strtolower($row['status']) == 'completed') ? 'selected' : ''; ?>>Completed</option>
                                         <option value="cancelled" <?php echo (strtolower($row['status']) == 'cancelled') ? 'selected' : ''; ?>>Cancelled</option>
                                     </select>
-                                    <button type="submit" name="update_status" class="btn btn-primary btn-sm">
-                                        <i class="fas fa-save"></i> Update
+                                    <button type="submit" name="update_status" class="btn btn-update ">
+                                       Update
                                     </button>
-                                    <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#orderModal<?php echo $row['id']; ?>">
-                                        <i class="fas fa-eye"></i> View
+                                    <button type="button" class="btn btn-view" data-toggle="modal" data-target="#orderModal<?php echo $row['id']; ?>">
+                                        View
                                     </button>
                                 </form>
 
                                 <!-- Delete Button -->
                                 <a href="?delete=<?php echo $row['id']; ?>" 
-                                   class="btn btn-danger btn-sm" 
+                                   
                                    onclick="return confirm('Are you sure you want to delete this order?');">
-                                    <i class="fas fa-trash"></i> Delete
+                                   <button  class="btn btn-danger "> Delete</button> 
                                 </a>
                             </td>
                         </tr>
@@ -188,27 +183,27 @@ while ($row = mysqli_fetch_assoc($result)) :
         die("Query failed: " . mysqli_error($conn));
     }
 ?>
-<div class="modal fade" id="orderModal<?php echo $row['id']; ?>" tabindex="-1" role="dialog" aria-labelledby="orderModalLabel<?php echo $row['id']; ?>" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+<div class="modal" id="orderModal<?php echo $row['id']; ?>" tabindex="-1" role="dialog" aria-labelledby="orderModalLabel<?php echo $row['id']; ?>" aria-hidden="true">
+    <div class="modal-dialog " role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="orderModalLabel<?php echo $row['id']; ?>">
                     Order Details #<?php echo $row['id']; ?>
                 </h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span >&times;</span>
                 </button>
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="col-md-6">
-                        <h6>Customer Information</h6>
+                    <div >
+                        <h5>Customer Information</h5>
                         <p><strong>Name:</strong> <?php echo htmlspecialchars($row['username']); ?></p>
                         <p><strong>Email:</strong> <?php echo htmlspecialchars($row['email']); ?></p>
                         <p><strong>Phone:</strong> <?php echo htmlspecialchars($row['phone']); ?></p>
                     </div>
-                    <div class="col-md-6">
-                        <h6>Order Information</h6>
+                    <div >
+                        <h5>Order Information</h5>
                         <p><strong>Order Date:</strong> <?php echo date('Y-m-d H:i', strtotime($row['created_at'])); ?></p>
                         <p><strong>Status:</strong> 
                             <span class="badge <?php echo getStatusBadgeClass($row['status']); ?>">
@@ -219,9 +214,9 @@ while ($row = mysqli_fetch_assoc($result)) :
                     </div>
                 </div>
 
-                <h6 class="mt-4">Order Items</h6>
+                <h5>Order Items</h5>
                 <div class="table-responsive">
-                    <table class="table table-bordered table-striped">
+                    <table class="table">
                         <thead>
                             <tr>
                                 <th>Item</th>
@@ -247,7 +242,7 @@ while ($row = mysqli_fetch_assoc($result)) :
                         </tbody>
                         <tfoot>
                             <tr>
-                                <th colspan="3" class="text-right">Total:</th>
+                                <th colspan="3">Total:</th>
                                 <th>Rs. <?php echo number_format($total, 2); ?></th>
                             </tr>
                         </tfoot>
@@ -309,7 +304,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <style>
-/* Reset and Base Styles */
+
 * {
     margin: 0;
     padding: 0;
@@ -397,7 +392,7 @@ tr:nth-child(even) {
 .status-cancelled { background: #dc3545; }
 
 
-/* Form Styles */
+
 .form-control {
     padding: 8px;
     border: 1px solid #ddd;
@@ -410,6 +405,7 @@ tr:nth-child(even) {
 select.form-control {
     padding-right: 30px;
 }
+
 
 /* Button Styles */
 .btn {
@@ -424,13 +420,10 @@ select.form-control {
     text-decoration: none;
 }
 
-.btn-sm {
-    padding: 5px 10px;
-    font-size: 12px;
-}
 
-.btn-primary { background: #007bff; }
-.btn-info { background: #17a2b8; }
+
+.btn-update { background: #007bff; }
+.btn-view { background: #17a2b8; }
 .btn-danger { background: #dc3545; }
 .btn-secondary { background: #6c757d; }
 
@@ -438,7 +431,7 @@ select.form-control {
     opacity: 0.9;
 }
 
-/* Modal Styles */
+
 .modal {
     display: none;
     position: fixed;
@@ -525,13 +518,6 @@ select.form-control {
     top: 10px;
     color: inherit;
 }
-
-/* Utility Classes */
-.mt-4 { margin-top: 20px; }
-.d-inline { display: inline-block; }
-.text-right { text-align: right; }
-
-/* Responsive Design */
 @media (max-width: 768px) {
     .container-fluid {
         width: 100%;
@@ -553,7 +539,7 @@ select.form-control {
     }
 }
 
-/* Add these modal styles */
+
 .modal {
     display: none;
     position: fixed;
@@ -569,7 +555,7 @@ select.form-control {
     display: block;
 }
 
-/* Remove the anchor tag styles from close button */
+
 .modal-footer .btn-secondary {
     color: #fff;
     text-decoration: none;
@@ -581,4 +567,3 @@ select.form-control {
 }
 </style>
 
-<?php include 'includes/footer.php'; ?>
