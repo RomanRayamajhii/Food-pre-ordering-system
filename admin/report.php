@@ -45,7 +45,6 @@ if (isset($_POST['start_date']) && isset($_POST['end_date'])) {
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
             background-color: #f4f4f9;
         }
 
@@ -53,13 +52,18 @@ if (isset($_POST['start_date']) && isset($_POST['end_date'])) {
             color: #333;
             text-align: center;
         }
+        .container{
+            margin: 20px;
+        }
 
         form {
             background-color: #fff;
+            width: 80%;
+            margin: 20px auto;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
+           
         }
 
         label {
@@ -92,8 +96,8 @@ if (isset($_POST['start_date']) && isset($_POST['end_date'])) {
         }
 
         table {
-            width: 100%;
-            margin-top: 20px;
+            width: 90%;
+            margin: 20px auto;
             border-collapse: collapse;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
@@ -120,7 +124,7 @@ if (isset($_POST['start_date']) && isset($_POST['end_date'])) {
     </style>
 </head>
 <body>
-
+<div class="container">
 <h2>Generate Report</h2>
 <form method="POST" action="">
     <label for="start_date">Start Date:</label>
@@ -131,6 +135,7 @@ if (isset($_POST['start_date']) && isset($_POST['end_date'])) {
     
     <button type="submit">Generate Report</button>
 </form>
+
 
 <?php
 if (isset($result) && $result->num_rows > 0) {
@@ -162,7 +167,7 @@ if (isset($result) && $result->num_rows > 0) {
 }
 ?>
 
-
+</div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 
