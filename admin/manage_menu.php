@@ -63,6 +63,7 @@ $categories_result = mysqli_query($conn, $categories_query);
    Add New Item
 </button>
         <!-- Menu Items Table -->
+         <div class="table-responsive">
         <table class="table">
             <thead>
                 <tr>
@@ -294,6 +295,7 @@ $categories_result = mysqli_query($conn, $categories_query);
         padding: 20px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         border-radius: 10px;
+        overflow-x: auto;
     }
     .card-header h2 {
         padding: 15px;
@@ -338,6 +340,9 @@ $categories_result = mysqli_query($conn, $categories_query);
         color: #721c24;
         border: 1px solid #f5c6cb;
     }
+    .table-responsive{
+        overflow-x: auto;
+    }
     .table {
         width: 100%;
         margin: 20px 0;
@@ -356,21 +361,25 @@ $categories_result = mysqli_query($conn, $categories_query);
         background-color: #f8f9fa;
     }
     .edit-btn{
-        background-color:rgb(233, 159, 0);
+        background-color:rgb(255, 189, 47);
         color: white;
         padding: 10px 20px;
         border: none;
         border-radius: 5px;
         cursor: pointer;
+        margin: 5px 0;
+
 
     }
     .delete-btn{
         background-color: #f44336;
         color: white;
-        padding: 10px 20px;
+        padding: 10px 14px;
         border: none;
         border-radius: 5px;
         cursor: pointer;
+        margin: 5px 0;
+        
 
     }
     .modal {
@@ -406,7 +415,7 @@ $categories_result = mysqli_query($conn, $categories_query);
 
     }
     .modal-footer .btn-secondary{
-        background-color:rgb(0, 58, 2);
+        background-color:rgb(9, 183, 15);
         color: #fff;
         border: none;
         cursor: pointer;

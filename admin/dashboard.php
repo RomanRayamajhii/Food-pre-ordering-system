@@ -25,7 +25,7 @@ session_start();
             
         }
 
-        .user, .order, .menu, .category,.comment {
+        .user, .order, .menu, .category,.comment,.report  {
             background-color: #fff;
             padding: 20px;
             border-radius: 8px;
@@ -35,19 +35,19 @@ session_start();
             text-align: center;
         }
 
-        .user h2, .order h2, .menu h2, .category h2,.comment h2 {
+        .user h2, .order h2, .menu h2, .category h2,.comment h2,.report h2 {
             font-size: 22px;
             color: #333;
             margin-bottom: 10px;
         }
 
-        .user p, .order p, .menu p, .category p ,.comment p{
+        .user p, .order p, .menu p, .category p ,.comment p, .report p{
             font-size: 16px;
             color: #666;
             margin-bottom: 15px;
         }
 
-        .user a, .order a, .menu a, .category a, .comment a {
+        .user a, .order a, .menu a, .category a, .comment a,.report a {
             display: inline-block;
             padding: 10px 20px;
             background-color: #007bff;
@@ -68,7 +68,7 @@ session_start();
             align-items: center;
          
         }
-        .user, .order, .menu, .category, .comment {
+        .user, .order, .menu, .category, .comment,.report {
             width:90%;
         }
     }
@@ -103,6 +103,11 @@ session_start();
         <h2>Manage Comments</h2>
         <p>Add,Remove comments</p>
         <a href="./manage_comment.php">Go to Comment</a>
+       </div>
+       <div class="report">
+        <h2>Generate Report</h2>
+        <p>Generate Reports Here</p>
+        <a href="./report.php">Go to Report</a>
        </div>
        
     </div>

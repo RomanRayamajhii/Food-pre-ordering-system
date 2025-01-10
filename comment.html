@@ -1,151 +1,218 @@
-<!-- <!DOCTYPE html>
+<?php
+session_start();
+// Assuming user_id is set in session after login
+if($_SESSION['user_id']){
+    $conn = new mysqli('localhost', 'root', '', 'food_ordering'); // Replace with your database name
+
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+    }
+    
+    // Add comment
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_comment'])) {
+        $userId = $_SESSION['user_id']; 
+        $comment = $conn->real_escape_string($_POST['comment']);
+        $conn->query("INSERT INTO comments (user_id, comment, created_at) VALUES ('$userId', '$comment', NOW())");
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit;
+    }
+    
+    
+    // Delete comment
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_comment'])) {
+        session_start();
+        if (!isset($_SESSION['user_id'])) {
+            die("Unauthorized access. You must be logged in to delete comments.");
+        }
+    
+        $commentId = intval($_POST['comment_id']);
+        $userId = $_SESSION['user_id'];
+    
+        // Check if the logged-in user owns the comment
+        $result = $conn->query("SELECT user_id FROM comments WHERE id = $commentId");
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            if ($row['user_id'] == $userId) {
+              
+              $conn->query("DELETE FROM comments WHERE id = $commentId");
+            } else {
+                die("Unauthorized action. You can only delete your own comments.");
+            }
+        } else {
+            die("Comment not found.");
+        }
+    
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit;
+    }
+}
+
+
+
+?>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hotel Comment</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <style>
-        main{
-            /* background-color: red; */
-            margin-bottom: 10px;
-        }
-        .show-comments{
-            box-shadow: 2px 2px 10px rgb(184, 184, 184);
-            border-radius: 10px;
-            width: 400px;
-            height: 100px;
-            margin: auto;
-            display: flex;
-            margin-top: 10px;
-        }
-        .icon{
-            background-color: grey;
-            height: 40px;
-            width: 40px;
-            border-radius: 20px;
-            margin-top: 10px;
-            margin-left: 15px;
-        }
-        .icon i{
-            font-size: 25px;
-            padding-top: 8px;
-            padding-left: 9px;
-        }
-        .comment-section{
-            /* background-color: yellow; */
-            margin-left: 10px;
-        }
-        .comment-section .top-div{
-            display: flex;
-            /* background-color: red; */
-            
-            height: 40px;
-        }
-        .comment-section .top-div p{
-            font-family: sans-serif;
-        }
-        .comment-section button{
-            margin-left: 150px;
-            height: 20px;
-            font-size: 12px;
-            margin-top: 13px;
-            background-color: rgb(168, 45, 45);
-            border: none;
-            border-radius: 5px;
-            color: rgb(255, 230, 230);
-            cursor: pointer;
-        }
-        .comment-section .low-div{
-            /* background-color: yellow; */
-            
-        }
-        .comment-section .low-div p{
-            margin-top: 0;
-            font-family: arial;
-            font-size: 15px;
-            color: rgb(83, 83, 83);
-        }
-        .enter-comment{
-            width: 400px;
-            margin: auto;
-            /* background-color: yellow; */
-        }
-        .type-comment{
-            width: 300px;
-            height: 50px;
-            resize: none;
-            font-size: 15px;
-            border-radius: 5px;
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+<style>
+    main {
+    margin-bottom: 20px;
+    font-family: 'Arial', sans-serif;
+}
+
+.show-comments {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    width: 450px;
+    margin: 15px auto;
+    display: flex;
+    background-color: #f9f9f9;
+    padding: 15px;
+    transition: transform 0.3s ease;
+}
+
+.show-comments:hover {
+    transform: translateY(-5px);
+}
+
+.icon {
+    background-color: #4e73df;
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+}
+
+.icon i {
+    font-size: 24px;
+    color: white;
+}
+
+.comment-section {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.comment-section p {
+    margin: 0;
+    color: #333;
+}
+
+.comment-section .top-div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.comment-section .top-div p {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+}
+
+.comment-section button {
+    height: 28px;
+    font-size: 14px;
+    background-color: #e74a3b;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    padding: 0 12px;
+    transition: background-color 0.3s ease;
+}
+
+.comment-section button:hover {
+    background-color: #c0392b;
+}
+
+.comment-section .low-div p {
+    font-size: 16px;
+    color: #555;
+    margin-top: 8px;
+    font-family: 'Arial', sans-serif;
+}
+
+.enter-comment {
+    width: 450px;
+    margin: 20px auto;
+    text-align: center;
+}
+
+.type-comment {
+    width: 100%;
+    height: 60px;
+    padding: 10px;
+    font-size: 16px;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    resize: none;
+    outline: none;
+    margin: auto;
+}
+
+.type-comment:focus {
+    border-color: #4e73df;
+}
+
+.post-button {
+    margin-top: 10px;
+    height: 40px;
+    width: 100%;
+    background-color: #4e73df;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.post-button:hover {
+    background-color: #2e5cb8;
+}
+
+</style>
 </head>
 <body>
+    <a href="index.php">Back to home</a>
     <main class="main">
-        <div class="show-comments">
-            <div class="icon">
-                <i class="fa-regular fa-user"></i>
-            </div>
-            <div class="comment-section">
-                <div class="top-div">
-                    <p>Customer</p>
-                    <button>Delete Comment</button>
+        <?php
+        $result = $conn->query("SELECT comments.*, users.username FROM comments JOIN users ON comments.user_id = users.id order by created_at desc");
+
+        while ($row = $result->fetch_assoc()) {
+            $formattedTime = date('d M Y, H:i', strtotime($row['created_at']));
+            echo "
+            <div class='show-comments'>
+                <div class='icon'><i class='fa-regular fa-user'></i></div>
+                <div class='comment-section'>
+                    <p><strong>{$row['username']}:</strong> <span style='font-size: 12px; color: grey;'>{$formattedTime}</span></p>
+                    <p>{$row['comment']}</p>
                 </div>
-                <div class="low-div">
-                    <p>this is comment</p>
-                </div>
-            </div>
-        </div>
+                <form method='post' style='margin-left: auto;'>
+                    <input type='hidden' name='comment_id' value='{$row['id']}'>
+                    <button type='submit' name='delete_comment' class='delete-button' '>Delete</button>
+                </form>
+            </div>";
+        }
+        ?>
     </main>
+
     <div class="enter-comment">
-        <textarea class="type-comment" placeholder="type a comment"></textarea>
-        <button onclick="addComment()">Post</button>
+        <form method="post">
+            <textarea class="type-comment" name="comment" placeholder="Type a comment" required></textarea>
+            <button type="submit" name="add_comment" class="post-button">Post</button>
+        </form>
     </div>
-    <script >
-        const review = [];
-showComment();
-function showComment(){
-    let commentHtml='';
-    for(let i=0; i<review.length; i++){
-        const commentValue = review[i];
-        const comment = commentValue.comment;
-        const html = `
-             <div class="show-comments">
-                <div class="icon">
-                    <i class="fa-regular fa-user"></i>
-                </div>
-                <div class="comment-section">
-                    <div class="top-div">
-                        <p>Customer</p>
-                        <button class="delete-button" onclick="deleteComment(${i})">Delete Comment</button>
-                    </div>
-                    <div class="low-div">
-                        <p>${comment}</p>
-                    </div>
-                </div>
-            </div>
-        `;
-        commentHtml += html;
-    }
-    const commentContainer = document.querySelector('.main'); 
-    commentContainer.innerHTML = commentHtml;
 
-}
-
-function addComment(){
-    const inputElement = document.querySelector('.type-comment');
-    const comment = inputElement.value;
-
-    review.push({
-        comment: comment
-    });
-    inputElement.value='';
-    showComment();
-}
-function deleteComment(index) {
-    review.splice(index, 1);
-    showComment();
-}
-    </script>
 </body>
-</html> -->
+</html>
+

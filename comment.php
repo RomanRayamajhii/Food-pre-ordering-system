@@ -20,7 +20,7 @@ if($_SESSION['user_id']){
     
     // Delete comment
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_comment'])) {
-        session_start();
+       
         if (!isset($_SESSION['user_id'])) {
             die("Unauthorized access. You must be logged in to delete comments.");
         }
@@ -57,133 +57,124 @@ if($_SESSION['user_id']){
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hotel Comment</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hammersmith+One&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
 <style>
-    main {
-    margin-bottom: 20px;
-    font-family: 'Arial', sans-serif;
-}
+  *{
+            margin: 0;
+            padding: 0;
+        }
+        .back{
+            background-color: rgb(113, 113, 228);
+            border: none; 
+            height: 30px;
+            padding-left: 10px;
+            padding-right: 10px;
+            cursor: pointer;
+            color: white;
+            margin-top: 10px;
+            margin-left: 10px;
+            font-family: 'roboto';
+            border-radius: 5px;
+            text-decoration: underline;
+        }
+        .show-comments{
+            box-shadow: 2px 2px 8px black;
+            border-radius: 5px;
+            width: 400px;
+            margin: auto;
+            display: flex;
+            min-height: 100px;
+            margin-top: 10px;
+        }
+        .show-comments .icon{
+            background-color: #f0f0f0;
+            height: 40px;
+            width: 40px;
+            border-radius: 100px;
+            margin-left: 6px;
+            margin-top: 8px;
+            cursor: pointer;
+        }
+        .show-comments .icon i{
+            font-size: 25px;
+            padding-left: 10px;
+            padding-top: 7px;
+            color: rgb(128, 128, 236);
+        }
+        .show-comments .username{
+            font-family: 'poppins';
+            font-size: 14px;
+            margin-top: 10px;
+            margin-left: 8px;
+            font-weight: 600;
+            color: rgb(102, 100, 100);
+        }
+        .show-comments span{
+            margin-left: 8px;
+        }
+        .show-comments .comment{
+            margin-left: 8px;
+            margin-top: 5px;
+            font-family: 'roboto';
+            font-size: 14px;
+            font-weight: 400;
+            color: rgb(71, 70, 70);
+        }
+        .show-comments .delete-button{
+            background-color: red;
+            border-radius: 10px;
+            letter-spacing: 1px;
+            border: none;
+            margin-top: 8px;
+            margin-right: 10px;
+            height: 30px;
+            width: 60px;
+            color: rgb(255, 253, 253);
+            font-family: 'poppins';
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .show-comments .delete-button:hover{
+            background-color: rgb(248, 87, 87);
+        }
+        .enter-comment{
+            width: 400px;
+            margin: auto;
+            margin-top: 20px;
+        }
+        .enter-comment form{
+            display: flex;
+            width: 100%;
+        }
+        .enter-comment form textarea{
+            resize: none;
+            height: 60px;
+            width: 315px;
+            font-size: 14px;
+            font-family: 'poppins';
+            padding-left: 5px;
+            border-radius: 4px;
+        }
+       .enter-comment form .post-button{
+        background-color: rgb(128, 128, 236);
+        border: none;
+        border-radius: 10px;
 
-.show-comments {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-    width: 450px;
-    margin: 15px auto;
-    display: flex;
-    background-color: #f9f9f9;
-    padding: 15px;
-    transition: transform 0.3s ease;
-}
-
-.show-comments:hover {
-    transform: translateY(-5px);
-}
-
-.icon {
-    background-color: #4e73df;
-    height: 50px;
-    width: 50px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 15px;
-}
-
-.icon i {
-    font-size: 24px;
-    color: white;
-}
-
-.comment-section {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-.comment-section p {
-    margin: 0;
-    color: #333;
-}
-
-.comment-section .top-div {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.comment-section .top-div p {
-    font-size: 14px;
-    font-weight: bold;
-    color: #333;
-}
-
-.comment-section button {
-    height: 28px;
-    font-size: 14px;
-    background-color: #e74a3b;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    padding: 0 12px;
-    transition: background-color 0.3s ease;
-}
-
-.comment-section button:hover {
-    background-color: #c0392b;
-}
-
-.comment-section .low-div p {
-    font-size: 16px;
-    color: #555;
-    margin-top: 8px;
-    font-family: 'Arial', sans-serif;
-}
-
-.enter-comment {
-    width: 450px;
-    margin: 20px auto;
-    text-align: center;
-}
-
-.type-comment {
-    width: 100%;
-    height: 60px;
-    padding: 10px;
-    font-size: 16px;
-    border: 2px solid #ccc;
-    border-radius: 8px;
-    resize: none;
-    outline: none;
-    margin: auto;
-}
-
-.type-comment:focus {
-    border-color: #4e73df;
-}
-
-.post-button {
-    margin-top: 10px;
-    height: 40px;
-    width: 100%;
-    background-color: #4e73df;
-    color: white;
-    font-size: 16px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.post-button:hover {
-    background-color: #2e5cb8;
-}
+        margin-left: 15px;
+        height: 60px;
+        width: 80px;
+        font-size: 16px;
+        color: white;
+        cursor: pointer;
+    }
 
 </style>
 </head>
 <body>
-    <a href="index.php">Back to home</a>
+    <a href="index.php"  ><button class="back" style="text-decoration:none; font-size:14px"> <b> &lt; &lt; </b>Back to home</button></a>
     <main class="main">
         <?php
         $result = $conn->query("SELECT comments.*, users.username FROM comments JOIN users ON comments.user_id = users.id order by created_at desc");
@@ -191,28 +182,29 @@ if($_SESSION['user_id']){
         while ($row = $result->fetch_assoc()) {
             $formattedTime = date('d M Y, H:i', strtotime($row['created_at']));
             echo "
-            <div class='show-comments'>
-                <div class='icon'><i class='fa-regular fa-user'></i></div>
-                <div class='comment-section'>
-                    <p><strong>{$row['username']}:</strong> <span style='font-size: 12px; color: grey;'>{$formattedTime}</span></p>
-                    <p>{$row['comment']}</p>
-                </div>
-                <form method='post' style='margin-left: auto;'>
-                    <input type='hidden' name='comment_id' value='{$row['id']}'>
-                    <button type='submit' name='delete_comment' class='delete-button' '>Delete</button>
-                </form>
-            </div>";
+                <div class='show-comments'>
+                    <div class='icon'><i class='fa-solid fa-user'></i></div>
+                    <div class='comment-section'>
+                        <p class='username'>{$row['username']}</p>
+                        <span style='font-size: 12px; color: grey;'>{$formattedTime}</span>
+                        <p class='comment'>{$row['comment']}</p>
+                    </div>
+                    <form method='post' style='margin-left: auto;'>
+                        <input type='hidden' name='comment_id' value='{$row['id']}'>
+                        <button type='submit' name='delete_comment' class='delete-button' '>Delete</button>
+                    </form>
+            </div>
+            ";
         }
         ?>
     </main>
 
     <div class="enter-comment">
-        <form method="post">
-            <textarea class="type-comment" name="comment" placeholder="Type a comment" required></textarea>
-            <button type="submit" name="add_comment" class="post-button">Post</button>
-        </form>
+            <form method="post">
+                <textarea class="type-comment" name="comment" placeholder="Type a comment" required></textarea>
+                <button type="submit" name="add_comment" class="post-button">Post</button>
+            </form>
     </div>
 
 </body>
 </html>
-

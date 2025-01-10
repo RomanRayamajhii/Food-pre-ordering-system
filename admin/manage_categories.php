@@ -77,7 +77,7 @@ if (!$categories) {
         </div>
     <?php endif; ?>
 
-    <table>
+    <table >
         <tr>
             <th>ID</th>
             <th>Name</th>
