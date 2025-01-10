@@ -66,10 +66,11 @@
     <h1>
         <a href="./dashboard.php">Admin Panel</a></h1>
     <nav >
-        <a href="">User</a>
-        <a href="">Order</a>
-        <a href="">Menu</a>
-        <a href="">Category</a>
+        <a href="./manage_users.php">User</a>
+        <a href="./manage_orders.php">Order</a>
+        <a href="./manage_menu.php">Menu</a>
+        <a href="./manage_categories.php">Category</a>
+        <a href="./manage_comment.php">Comments</a>
         <a href="./logout.php">Logout</a>
     </nav>
  

@@ -1,5 +1,6 @@
 <?php
 session_start();
+include "./header.php";
 
     $conn = new mysqli('localhost', 'root', '', 'food_ordering'); // Database
 
@@ -166,7 +167,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_comment'])) {
 </style>
 </head>
 <body>
-    <a href="dashboard.php">Back to home</a>
     <main class="main">
         <?php
         $result = $conn->query("SELECT comments.*, users.username FROM comments JOIN users ON comments.user_id = users.id order by created_at desc");
