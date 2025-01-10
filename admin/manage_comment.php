@@ -1,8 +1,7 @@
 <?php
 session_start();
-// Assuming user_id is set in session after login
-if($_SESSION['user_id']){
-    $conn = new mysqli('localhost', 'root', '', 'food_ordering'); // Replace with your database name
+
+    $conn = new mysqli('localhost', 'root', '', 'food_ordering'); // Database
 
     if ($conn->connect_error) {
         die("Connection failed: " . $conn->connect_error);
@@ -10,46 +9,30 @@ if($_SESSION['user_id']){
     
     // Add comment
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_comment'])) {
-        $userId = $_SESSION['user_id']; 
+        $userId = 1; // Hardcoded user ID
         $comment = $conn->real_escape_string($_POST['comment']);
         $conn->query("INSERT INTO comments (user_id, comment, created_at) VALUES ('$userId', '$comment', NOW())");
         header("Location: " . $_SERVER['PHP_SELF']);
         exit;
     }
-    
-    
     // Delete comment
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_comment'])) {
-        session_start();
-        if (!isset($_SESSION['user_id'])) {
-            die("Unauthorized access. You must be logged in to delete comments.");
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_comment'])) {
+    $commentId = intval($_POST['comment_id']);
+    $userId = 1;
+        if ($userId==1) {
+            $conn->query("DELETE FROM comments WHERE id = $commentId");
         }
-    
-        $commentId = intval($_POST['comment_id']);
-        $userId = $_SESSION['user_id'];
-    
-        // Check if the logged-in user owns the comment
-        $result = $conn->query("SELECT user_id FROM comments WHERE id = $commentId");
-        if ($result->num_rows > 0) {
-            $row = $result->fetch_assoc();
-            if ($row['user_id'] == $userId) {
-              
-              $conn->query("DELETE FROM comments WHERE id = $commentId");
-            } else {
-                die("Unauthorized action. You can only delete your own comments.");
-            }
-        } else {
-            die("Comment not found.");
-        }
-    
-        header("Location: " . $_SERVER['PHP_SELF']);
-        exit;
-    }
+    header("Location: " . $_SERVER['PHP_SELF']);
+    exit;
 }
+    
+    
 
 
 
 ?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -183,7 +166,7 @@ if($_SESSION['user_id']){
 </style>
 </head>
 <body>
-    <a href="index.php">Back to home</a>
+    <a href="dashboard.php">Back to home</a>
     <main class="main">
         <?php
         $result = $conn->query("SELECT comments.*, users.username FROM comments JOIN users ON comments.user_id = users.id order by created_at desc");

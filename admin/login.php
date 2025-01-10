@@ -7,11 +7,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Trim inputs
     $username = trim($_POST['username']);
     $password = trim($_POST['password']);
-
-    if ($username === "admin" && $password === "admin@123") {
+    $sql="select * from users where username='$username' And password='$password'";
+    $result = mysqli_query($conn, $sql);
+if( mysqli_num_rows($result)==1){
+    $_SESSION['username']=$username;
+    $_SESSION['user_id'] = $user['id'];
         header("Location: ./dashboard.php");
         exit; 
-    } else {
+}
+    else {
        
         $_SESSION['errormessage'] = "Invalid Username or Password";
        

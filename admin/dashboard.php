@@ -22,10 +22,10 @@ session_start();
             display: flex;
             flex-wrap: wrap;
             justify-content: space-between;
-           gap:5px;
+            
         }
 
-        .user, .order, .menu, .category {
+        .user, .order, .menu, .category,.comment {
             background-color: #fff;
             padding: 20px;
             border-radius: 8px;
@@ -35,21 +35,20 @@ session_start();
             text-align: center;
         }
 
-        .user h2, .order h2, .menu h2, .category h2 {
+        .user h2, .order h2, .menu h2, .category h2,.comment h2 {
             font-size: 22px;
             color: #333;
             margin-bottom: 10px;
         }
 
-        .user p, .order p, .menu p, .category p {
+        .user p, .order p, .menu p, .category p ,.comment p{
             font-size: 16px;
             color: #666;
             margin-bottom: 15px;
         }
 
-        .user a, .order a, .menu a, .category a {
+        .user a, .order a, .menu a, .category a, .comment a {
             display: inline-block;
-           
             padding: 10px 20px;
             background-color: #007bff;
             color: #fff;
@@ -69,7 +68,7 @@ session_start();
             align-items: center;
          
         }
-        .user, .order, .menu, .category {
+        .user, .order, .menu, .category, .comment {
             width:90%;
         }
     }
@@ -99,6 +98,11 @@ session_start();
         <h2>Manage Categories</h2>
         <p>Add, edit, or remove categories</p>
         <a href="./manage_categories.php">Go to Categories</a>
+       </div>
+       <div class="comment">
+        <h2>Manage Comments</h2>
+        <p>Add,Remove comments</p>
+        <a href="./manage_comment.php">Go to Comment</a>
        </div>
        
     </div>
