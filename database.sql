@@ -44,8 +44,9 @@ CREATE TABLE  orders (
     user_id INT NOT NULL,
     order_id VARCHAR(50) UNIQUE,
     total_amount DECIMAL(10,2) NOT NULL,
-    address TEXT NOT NULL,
+    full_name VARCHAR(50) NOT NULL,
     phone VARCHAR(20) NOT NULL,
+     address TEXT NOT NULL,
     delivery_time VARCHAR(50),
     comments TEXT,
     status ENUM('pending', 'confirmed', 'preparing', 'ready', 'completed', 'cancelled') DEFAULT 'pending',
@@ -62,4 +63,12 @@ CREATE TABLE  order_items (
     price DECIMAL(10,2) NOT NULL,
     FOREIGN KEY (order_id) REFERENCES orders(id),
     FOREIGN KEY (item_id) REFERENCES menu_items(id)
+);
+
+CREATE TABLE comments (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    comment TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );

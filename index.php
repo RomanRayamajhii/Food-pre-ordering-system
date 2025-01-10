@@ -61,14 +61,14 @@ if ($showMenu) {
             <img src="./image/nepalese-restaurant.jpg" alt="">
             <h2>Hotel Everest</h2>
             <p>Hotel Everest is a Nepalese restaurant located in the heart of Kathmandu. We serve authentic Nepalese cuisine that will leave you wanting more. Our restaurant is known for its friendly staff and excellent service. Come and experience the taste of Nepal at Hotel Everest!</p>
-            <a href="menu.php">View Menu</a>
+            <a href="comment.php">View comments</a>
         </div>
-        <div class="special-hotel">
+        <!-- <div class="special-hotel">
             <img src="./image/hostel.jpg" alt="">
             <h2>Hotel Koshi</h2>
             <p>Hotel Everest is a Nepalese restaurant located in the heart of Kathmandu. We serve authentic Nepalese cuisine that will leave you wanting more. Our restaurant is known for its friendly staff and excellent service. Come and experience the taste of Nepal at Hotel Everest!</p>
             <a href="menu.php">View Menu</a>
-        </div>
+        </div> -->
 
     </section>
 

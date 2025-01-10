@@ -211,12 +211,12 @@ function showCombinedTime(event) {
             <button type="submit" class="payment-btn">Place Order</button>
         </form>
     </div>
-
+<!-- old script to update -->
     <script>
         function updateQuantity(itemId, action) {
             let quantitySpan = document.getElementById('quantity_' + itemId);
             let quantity = parseInt(quantitySpan.innerText);
-            let price = <?php echo json_encode(array_column($cart_items, 'price', 'id')); ?>[itemId];
+            let price = <?php  echo json_encode(array_column($cart_items, 'price', 'id')); ?>[itemId];
             
             if(action === 'increase' && quantity < 10) {
                 quantity++;
@@ -281,13 +281,14 @@ function showCombinedTime(event) {
             let total = 0;
             <?php foreach($cart_items as $item): ?>
                 let quantity_<?php echo $item['id']; ?> = parseInt(document.getElementById('quantity_<?php echo $item['id']; ?>').innerText);
-                let price_<?php echo $item['id']; ?> = <?php echo $item['price']; ?>;
+                let price_<?php  echo $item['id']; ?> = <?php echo $item['price']; ?>;
                 total += quantity_<?php echo $item['id']; ?> * price_<?php echo $item['id']; ?>;
             <?php endforeach; ?>
             
             document.getElementById('total').innerText = total;
             document.getElementById('total_amount').value = total;
         }
-    </script>
+    </script> 
+ 
 </body>
 </html> 

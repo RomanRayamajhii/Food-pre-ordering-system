@@ -15,7 +15,12 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['cart'] = [];
     }
 
-    $_SESSION['cart'][$item_id] = $quantity;
+    // Update quantity if item already exists
+    if (isset($_SESSION['cart'][$item_id])) {
+        $_SESSION['cart'][$item_id] += $quantity; // Increment existing quantity
+    } else {
+        $_SESSION['cart'][$item_id] = $quantity; // Set new quantity
+    }
 
     echo json_encode(['success' => true]);
     exit();
