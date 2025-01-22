@@ -2,10 +2,6 @@
 session_start();
 include 'config/db.php';
 
-// Enable error reporting for debugging
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
 // Check if user is logged in and cart exists
 if (!isset($_SESSION['user_id']) || empty($_SESSION['cart'])) {
     header("Location: menu.php");
@@ -20,11 +16,6 @@ $phone = $_POST['phone'];
 $address = $_POST['address'];
 $delivery_time = $_POST['delivery_time'];
 $comments = isset($_POST['comments']) ? $_POST['comments'] : '';
-
-// First, verify your database connection
-if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
-}
 
 // Simple insert query for orders
 $sql = "INSERT INTO orders (user_id, total_amount, full_name, phone, address, delivery_time, comments) 

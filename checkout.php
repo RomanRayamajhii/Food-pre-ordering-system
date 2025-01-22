@@ -67,21 +67,13 @@ foreach($_SESSION['cart'] as $item_id => $quantity) {
             border-radius: 4px;
             cursor: pointer;
         }
-        .quantity-btn {
-            padding: 5px 10px;
-            margin: 0 5px;
-            background-color: #000;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
         .container {
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
         }
         .payment-btn {
-            background-color: #00A950; /* eSewa green color */
+            background-color: #00A950;
             color: white;
             padding: 12px 24px;
             border: none;
@@ -92,17 +84,6 @@ foreach($_SESSION['cart'] as $item_id => $quantity) {
         }
         .payment-btn:hover {
             background-color: #008940;
-        }
-        #payment_amount {
-            background-color: #f9f9f9;
-            font-weight: bold;
-        }
-        select[name="payment_type"] {
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            width: 100%;
-            margin-bottom: 10px;
         }
         .remove-btn {
             background-color: #ff0000;
@@ -134,11 +115,7 @@ foreach($_SESSION['cart'] as $item_id => $quantity) {
                     <td><?php echo $item['name']; ?></td>
                     <td>Rs. <?php echo $item['price']; ?></td>
                     <td>
-                        <button type="button" class="quantity-btn" 
-                                onclick="updateQuantity(<?php echo $item['id']; ?>, 'decrease')">-</button>
                         <span id="quantity_<?php echo $item['id']; ?>"><?php echo $item['quantity']; ?></span>
-                        <button type="button" class="quantity-btn" 
-                                onclick="updateQuantity(<?php echo $item['id']; ?>, 'increase')">+</button>
                     </td>
                     <td>Rs. <span id="subtotal_<?php echo $item['id']; ?>"><?php echo $item['subtotal']; ?></span></td>
                     <td>
@@ -170,36 +147,35 @@ foreach($_SESSION['cart'] as $item_id => $quantity) {
                 <textarea name="address" required></textarea>
             </div>
             <div class="form-group">
-    <label for="preferred_time">Preferred Time:</label>
-    <input type="time" name="delivery_time" id="preferred_time" style="font-size:15px" required>
-    <select id="ampm" name="ampm" style="font-size:15px; width:fit-content" required>
-        <option value="">Select AM/PM</option>
-        <option value="AM">AM</option>
-        <option value="PM">PM</option>
-    </select>
-   
-</div>
+                <label for="preferred_time">Preferred Time:</label>
+                <input type="time" name="delivery_time" id="preferred_time" style="font-size:15px" required>
+                <select id="ampm" name="ampm" style="font-size:15px; width:fit-content" required>
+                    <option value="">Select AM/PM</option>
+                    <option value="AM">AM</option>
+                    <option value="PM">PM</option>
+                </select>
+            </div>
 
-<p id="selected_time_display" style="margin-top: 10px; font-weight: bold;"></p>
+            <p id="selected_time_display" style="margin-top: 10px; font-weight: bold;"></p>
 
-<button onclick="showCombinedTime(event)">Choose Time</button>
+            <button onclick="showCombinedTime(event)">Choose Time</button>
 
-<script>
-function showCombinedTime(event) {
-    event.preventDefault(); // Prevent page reload if using a button
-    const selectedTime = document.getElementById("preferred_time").value;
-    const ampm = document.getElementById("ampm").value;
-    const displayElement = document.getElementById("selected_time_display");
+            <script>
+            function showCombinedTime(event) {
+                event.preventDefault(); // Prevent page reload if using a button
+                const selectedTime = document.getElementById("preferred_time").value;
+                const ampm = document.getElementById("ampm").value;
+                const displayElement = document.getElementById("selected_time_display");
 
-    if (selectedTime && ampm) {
-        const [hours, minutes] = selectedTime.split(':');
-        const formattedTime = `${parseInt(hours) % 12 || 12}:${minutes} ${ampm}`;
-        displayElement.textContent = `You selected: ${formattedTime}`;
-    } else {
-        displayElement.textContent = "Please select both a time and AM/PM.";
-    }
-}
-</script>
+                if (selectedTime && ampm) {
+                    const [hours, minutes] = selectedTime.split(':');
+                    const formattedTime = `${parseInt(hours) % 12 || 12}:${minutes} ${ampm}`;
+                    displayElement.textContent = `You selected: ${formattedTime}`;
+                } else {
+                    displayElement.textContent = "Please select both a time and AM/PM.";
+                }
+            }
+            </script>
 
             <div class="form-group">
                 <label>Comments (Optional):</label>
@@ -211,38 +187,8 @@ function showCombinedTime(event) {
             <button type="submit" class="payment-btn">Place Order</button>
         </form>
     </div>
-<!-- old script to update -->
-    <script>
-        function updateQuantity(itemId, action) {
-            let quantitySpan = document.getElementById('quantity_' + itemId);
-            let quantity = parseInt(quantitySpan.innerText);
-            let price = <?php  echo json_encode(array_column($cart_items, 'price', 'id')); ?>[itemId];
-            
-            if(action === 'increase' && quantity < 10) {
-                quantity++;
-            } else if(action === 'decrease' && quantity > 1) {
-                quantity--;
-            }
-            
-            quantitySpan.innerText = quantity;
-            
-            // Update subtotal
-            let subtotal = quantity * price;
-            document.getElementById('subtotal_' + itemId).innerText = subtotal;
-            
-            // Update total
-            updateTotal();
-            
-            // Update server-side cart
-            fetch('update_cart.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: 'item_id=' + itemId + '&quantity=' + quantity
-            });
-        }
 
+    <script>
         function removeItem(itemId) {
             if(confirm('Are you sure you want to remove this item?')) {
                 // Send AJAX request to remove item
@@ -276,19 +222,6 @@ function showCombinedTime(event) {
                 });
             }
         }
-
-        function updateTotal() {
-            let total = 0;
-            <?php foreach($cart_items as $item): ?>
-                let quantity_<?php echo $item['id']; ?> = parseInt(document.getElementById('quantity_<?php echo $item['id']; ?>').innerText);
-                let price_<?php  echo $item['id']; ?> = <?php echo $item['price']; ?>;
-                total += quantity_<?php echo $item['id']; ?> * price_<?php echo $item['id']; ?>;
-            <?php endforeach; ?>
-            
-            document.getElementById('total').innerText = total;
-            document.getElementById('total_amount').value = total;
-        }
-    </script> 
- 
+    </script>
 </body>
-</html> 
+</html>

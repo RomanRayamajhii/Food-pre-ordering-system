@@ -42,7 +42,6 @@ CREATE TABLE  menu_items (
 CREATE TABLE  orders (
     id INT PRIMARY KEY AUTO_INCREMENT,
     user_id INT NOT NULL,
-    order_id VARCHAR(50) UNIQUE,
     total_amount DECIMAL(10,2) NOT NULL,
     full_name VARCHAR(50) NOT NULL,
     phone VARCHAR(20) NOT NULL,

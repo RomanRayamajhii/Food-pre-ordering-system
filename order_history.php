@@ -15,14 +15,11 @@ $sql = "SELECT o.*,
         FROM orders o
         LEFT JOIN order_items oi ON o.id = oi.order_id
         LEFT JOIN menu_items mi ON oi.item_id = mi.id
-        WHERE o.user_id = ?
+        WHERE o.user_id = $user_id
         GROUP BY o.id
         ORDER BY o.created_at DESC";
 
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$orders = $stmt->get_result();
+$result = $conn->query($sql);
 ?>
 
 <!DOCTYPE html>
@@ -50,35 +47,30 @@ $orders = $stmt->get_result();
             display: flex;
             justify-content: space-between;
         }
-     
         .status-pending {
             color: #ffc107;
             background-color: #fff8e1;
         }
-
-.status-preparing {
-    color: #C86482;
-    background-color:#FFE4E1;
-}
-
-.status-completed {
-    color: #28a745;
-    background-color: #e8f5e9;
-}
-
-.status-cancelled {
-    color: #dc3545;
-    background-color: #ffebee;
-}
-.status-ready {
-    color: #FF6347;
-    background-color: #FFE4E1;
-}
-.status-confirmed {
-    color: #17a2b8;
-    background-color: #e3f2fd;
-}
-        
+        .status-preparing {
+            color: #C86482;
+            background-color: #FFE4E1;
+        }
+        .status-completed {
+            color: #28a745;
+            background-color: #e8f5e9;
+        }
+        .status-cancelled {
+            color: #dc3545;
+            background-color: #ffebee;
+        }
+        .status-ready {
+            color: #FF6347;
+            background-color: #FFE4E1;
+        }
+        .status-confirmed {
+            color: #17a2b8;
+            background-color: #e3f2fd;
+        }
         .back-btn {
             display: inline-block;
             padding: 10px 20px;
@@ -95,8 +87,8 @@ $orders = $stmt->get_result();
         <a href="index.php" class="back-btn">Back to Home</a>
         <h1>My Orders</h1>
 
-        <?php if ($orders->num_rows > 0): ?>
-            <?php while ($order = $orders->fetch_assoc()): ?>
+        <?php if ($result->num_rows > 0): ?>
+            <?php while ($order = $result->fetch_assoc()): ?>
                 <div class="order-card">
                     <div class="order-header">
                         <strong>Order #<?php echo $order['id']; ?></strong>
@@ -123,4 +115,4 @@ $orders = $stmt->get_result();
         <?php endif; ?>
     </div>
 </body>
-</html> 
+</html>
