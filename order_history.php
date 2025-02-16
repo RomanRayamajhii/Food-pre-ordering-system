@@ -99,9 +99,7 @@ $result = $conn->query($sql);
                     <p><strong>Order Date:</strong> <?php echo date('M d, Y h:i A', strtotime($order['created_at'])); ?></p>
                     <p><strong>Items:</strong> <?php echo $order['items']; ?></p>
                     <p><strong>Total Amount:</strong> Rs. <?php echo number_format($order['total_amount'], 2); ?></p>
-                    <p><strong>Delivery Address:</strong> <?php echo htmlspecialchars($order['address']); ?></p>
-                    <p><strong>Phone:</strong> <?php echo htmlspecialchars($order['phone']); ?></p>
-                    <p><strong>Delivery Time:</strong> <?php echo htmlspecialchars($order['delivery_time']); ?></p>
+                 <p><strong>Preferred Time:</strong> <?php echo htmlspecialchars($order['preferred_time']); ?></p>
                     <?php if ($order['comments']): ?>
                         <p><strong>Comments:</strong> <?php echo htmlspecialchars($order['comments']); ?></p>
                     <?php endif; ?>

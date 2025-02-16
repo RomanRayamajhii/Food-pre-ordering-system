@@ -59,7 +59,7 @@ if(isset($_GET['delete'])) {
 }
 
 // Fetch orders
-$query = "SELECT o.*, u.username, u.email, u.phone 
+$query = "SELECT o.*,u.username, u.full_name, u.email, u.phone,u.address
           FROM orders o 
           LEFT JOIN users u ON o.user_id = u.id 
           ORDER BY o.created_at DESC";
@@ -198,19 +198,23 @@ while ($row = mysqli_fetch_assoc($result)) :
                 <div class="row">
                     <div >
                         <h5>Customer Information</h5>
-                        <p><strong>Name:</strong> <?php echo htmlspecialchars($row['username']); ?></p>
+                        <p><strong>Full Name:</strong> <?php echo htmlspecialchars($row['full_name']); ?></p>
                         <p><strong>Email:</strong> <?php echo htmlspecialchars($row['email']); ?></p>
                         <p><strong>Phone:</strong> <?php echo htmlspecialchars($row['phone']); ?></p>
+                        <p><strong>Address:</strong> <?php echo htmlspecialchars($row['address']); ?></p>
+
                     </div>
                     <div >
                         <h5>Order Information</h5>
                         <p><strong>Order Date:</strong> <?php echo date('Y-m-d H:i', strtotime($row['created_at'])); ?></p>
+                        <p><strong>Preferred_time:</strong> <?php echo htmlspecialchars($row['preferred_time']); ?></p>
                         <p><strong>Status:</strong> 
                             <span class="badge <?php echo getStatusBadgeClass($row['status']); ?>">
                                 <?php echo $row['status']; ?>
                             </span>
                         </p>
                         <p><strong>Total Amount:</strong> Rs. <?php echo number_format($row['total_amount'], 2); ?></p>
+                        <strong>Comments:</strong> <?php echo htmlspecialchars($row['comments']); ?></p>
                     </div>
                 </div>
 
@@ -257,7 +261,7 @@ while ($row = mysqli_fetch_assoc($result)) :
 </div>
 <?php endwhile; ?>
 
-<!-- Add this JavaScript for modal functionality -->
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Modal functionality
@@ -425,7 +429,7 @@ select.form-control {
 .btn-update { background: #007bff; }
 .btn-view { background: #17a2b8; }
 .btn-danger { background: #dc3545; }
-.btn-secondary { background: #6c757d; }
+.btn-secondary { background:rgb(81, 80, 80); }
 
 .btn:hover {
     opacity: 0.9;

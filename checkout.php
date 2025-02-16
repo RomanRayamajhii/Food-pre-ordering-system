@@ -30,6 +30,11 @@ foreach($_SESSION['cart'] as $item_id => $quantity) {
 <html>
 <head>
     <title>Checkout</title>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<!-- Include Flatpickr CSS and JS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <style>
         table {
             width: 100%;
@@ -132,50 +137,26 @@ foreach($_SESSION['cart'] as $item_id => $quantity) {
         </table>
 
         <form action="process_order.php" method="POST">
-            <div class="form-group">
-                <label>Full Name:</label>
-                <input type="text" name="full_name" required>
-            </div>
-
-            <div class="form-group">
-                <label>Phone Number:</label>
-                <input type="tel" name="phone" required>
-            </div>
-
-            <div class="form-group">
-                <label>Address:</label>
-                <textarea name="address" required></textarea>
-            </div>
+        
             <div class="form-group">
                 <label for="preferred_time">Preferred Time:</label>
-                <input type="time" name="delivery_time" id="preferred_time" style="font-size:15px" required>
-                <select id="ampm" name="ampm" style="font-size:15px; width:fit-content" required>
-                    <option value="">Select AM/PM</option>
-                    <option value="AM">AM</option>
-                    <option value="PM">PM</option>
-                </select>
+                <input type="text" name="preferred_time" id="preferred_time" style="font-size:15px" placeholder="12:00" required>
+                
+
+<script>
+  $(document).ready(function () {
+    // Initialize Flatpickr using jQuery
+    $("#preferred_time").flatpickr({
+      enableTime: true,
+      noCalendar: true,
+      dateFormat: "h:i K",
+      time_24hr: false
+    });
+  });
+</script>
             </div>
+            
 
-            <p id="selected_time_display" style="margin-top: 10px; font-weight: bold;"></p>
-
-            <button onclick="showCombinedTime(event)">Choose Time</button>
-
-            <script>
-            function showCombinedTime(event) {
-                event.preventDefault(); // Prevent page reload if using a button
-                const selectedTime = document.getElementById("preferred_time").value;
-                const ampm = document.getElementById("ampm").value;
-                const displayElement = document.getElementById("selected_time_display");
-
-                if (selectedTime && ampm) {
-                    const [hours, minutes] = selectedTime.split(':');
-                    const formattedTime = `${parseInt(hours) % 12 || 12}:${minutes} ${ampm}`;
-                    displayElement.textContent = `You selected: ${formattedTime}`;
-                } else {
-                    displayElement.textContent = "Please select both a time and AM/PM.";
-                }
-            }
-            </script>
 
             <div class="form-group">
                 <label>Comments (Optional):</label>

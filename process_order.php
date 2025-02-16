@@ -11,15 +11,12 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['cart'])) {
 // Get form data
 $user_id = $_SESSION['user_id'];
 $total_amount = $_POST['total_amount'];
-$full_name = $_POST['full_name'];
-$phone = $_POST['phone'];
-$address = $_POST['address'];
-$delivery_time = $_POST['delivery_time'];
+$preferred_time = $_POST['preferred_time'];
 $comments = isset($_POST['comments']) ? $_POST['comments'] : '';
 
 // Simple insert query for orders
-$sql = "INSERT INTO orders (user_id, total_amount, full_name, phone, address, delivery_time, comments) 
-        VALUES ('$user_id', '$total_amount', '$full_name', '$phone', '$address', '$delivery_time', '$comments')";
+$sql = "INSERT INTO orders (user_id, total_amount,preferred_time, comments) 
+        VALUES ('$user_id', '$total_amount','$preferred_time', '$comments')";
 
 if (mysqli_query($conn, $sql)) {
     $order_id = mysqli_insert_id($conn);

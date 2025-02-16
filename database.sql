@@ -13,7 +13,7 @@ CREATE TABLE  users (
     address TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     status ENUM('active', 'blocked') DEFAULT 'active',
-     last_login TIMESTAMP NULL
+
     
 );
 
@@ -43,10 +43,7 @@ CREATE TABLE  orders (
     id INT PRIMARY KEY AUTO_INCREMENT,
     user_id INT NOT NULL,
     total_amount DECIMAL(10,2) NOT NULL,
-    full_name VARCHAR(50) NOT NULL,
-    phone VARCHAR(20) NOT NULL,
-     address TEXT NOT NULL,
-    delivery_time VARCHAR(50),
+    preferred_time VARCHAR(50),
     comments TEXT,
     status ENUM('pending', 'confirmed', 'preparing', 'ready', 'completed', 'cancelled') DEFAULT 'pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
