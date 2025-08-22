@@ -129,11 +129,11 @@ include 'config/db.php';
             <?php foreach($cart_items as $item): ?>
                 <tr id="item_<?php echo $item['id']; ?>">
                     <td><?php echo $item['name']; ?></td>
-                    <td>Rs. <?php echo $item['price']; ?></td>
+                    <td>$ <?php echo $item['price']; ?></td>
                     <td>
                         <span class="qty" id="quantity_<?php echo $item['id']; ?>"><?php echo $item['quantity']; ?></span>
                     </td>
-                    <td>Rs. <span id="subtotal_<?php echo $item['id']; ?>"><?php echo $item['subtotal']; ?></span></td>
+                    <td>$ <span id="subtotal_<?php echo $item['id']; ?>"><?php echo $item['subtotal']; ?></span></td>
                     <td>
                         <button class="remove-btn" onclick="removeItem(<?php echo $item['id']; ?>)">
                             Remove
@@ -143,7 +143,7 @@ include 'config/db.php';
             <?php endforeach; ?>
             <tr>
                 <td colspan="3"><strong>Total</strong></td>
-                <td colspan="2"><strong>Rs. <span id="total"><?php echo $total; ?></span></strong></td>
+                <td colspan="2"><strong>$ <span id="total"><?php echo $total; ?></span></strong></td>
             </tr>
         </table>
     </div>

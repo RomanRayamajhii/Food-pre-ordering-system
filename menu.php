@@ -38,7 +38,15 @@ font-family: 'Poppins', sans-serif;
 body {
 background-color: #f5f5f5;
 }
-
+     .back-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #000;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 20px;
+        }
 .container {
 max-width: 1200px;
 margin: 0 auto;
@@ -216,11 +224,13 @@ font-size: 14px;
 </style>
 </head>
 <body>
+    
 <div class="menu-header">
+
 <h1>Our Menu</h1>
 <p>Discover our delicious offerings</p>
 </div>
-
+<a href="index.php" class="back-btn">Back to Home</a>
 <div class="container">
 <?php
 if (empty($menu_by_category)) {
@@ -259,7 +269,7 @@ onerror="this.src='assets/images/default-food.jpg'">
 <div class="item-info">
 <h3 class="item-name"><?php echo $item['name']; ?></h3>
 <p class="item-description"><?php echo $item['description']; ?></p>
-<div class="item-price">Rs. <?php echo number_format($item['price'], 2); ?></div>
+<div class="item-price">$ <?php echo number_format($item['price'], 2); ?></div>
 <form class="add-to-cart-form" onsubmit="return addToCart(this, event)">
 <input type="hidden" name="item_id" value="<?php echo $item['id']; ?>">
 

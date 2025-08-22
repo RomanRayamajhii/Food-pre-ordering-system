@@ -1,6 +1,5 @@
 <?php
 session_start();
-
 include 'config/db.php';
 
 // Check if the user is already logged in
@@ -15,13 +14,22 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $login_id = trim($_POST['login_id']);
     $password = $_POST['password'];
 
-    // Create the SQL query
-    $query = "SELECT id, email, phone, password, full_name FROM users WHERE email = '$login_id'";
+    // Create the SQL query (fetching status also)
+    $query = "SELECT id, email, phone, password, full_name, status 
+              FROM users 
+              WHERE email = '$login_id'";
     $result = mysqli_query($conn, $query);
 
     // Check if the user exists
     if (mysqli_num_rows($result) === 1) {
         $user = mysqli_fetch_assoc($result);
+
+        // Check if the user is blocked
+        if (strtolower($user['status']) === 'blocked') {
+            $_SESSION['error'] = "Your account has been blocked. Please contact support.";
+            header("Location: login.php");
+            exit();
+        }
 
         // Verify the password using password_verify
         if (password_verify($password, $user['password'])) {

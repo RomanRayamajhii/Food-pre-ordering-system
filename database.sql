@@ -49,7 +49,10 @@ CREATE TABLE  orders (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
-
+ALTER TABLE orders
+    ADD COLUMN payment_method ENUM('cash', 'paypal') DEFAULT 'cash' AFTER comments,
+    ADD COLUMN payment_status ENUM('pending', 'completed', 'failed') DEFAULT 'pending' AFTER payment_method,
+    ADD COLUMN transaction_id VARCHAR(255) AFTER payment_status;
 -- Order items table
 CREATE TABLE  order_items (
     id INT PRIMARY KEY AUTO_INCREMENT,

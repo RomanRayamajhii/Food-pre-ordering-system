@@ -2,51 +2,68 @@
 session_start();
 include 'config/db.php';
 
+$errors = [];
+
 if (isset($_POST['submit'])) {
-    $username = $_POST['username'];
-    $full_name = $_POST['full_name'];
-    $email = $_POST['email'];
-    $phone = $_POST['phone'];
+    $username = trim($_POST['username']);
+    $full_name = trim($_POST['full_name']);
+    $email = trim($_POST['email']);
+    $phone = trim($_POST['phone']);
     $password = $_POST['password'];
     $confirm_password = $_POST['confirm_password'];
-    $address = $_POST['address'];
+    $address = trim($_POST['address']);
 
-    // Validate fields
-    if (empty($username) || empty($full_name) || empty($email) || empty($phone) || empty($password) || empty($confirm_password) || empty($address)) {
-        echo "<script>alert('All fields are required');</script>";
-    } else {
-        // Check if email already exists
-        $query = "SELECT * FROM users WHERE email = '$email'";
+    // Simple validation
+    if (empty($username) || strlen($username) < 3 || strlen($username) > 50) {
+        $errors[] = "Username must be between 3 and 50 characters.";
+    }
+    if (empty($full_name)) {
+        $errors[] = "Full name is required.";
+    }
+    if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors[] = "A valid email is required.";
+    }
+    if (empty($phone) || !preg_match('/^[0-9]{10}$/', $phone)) {
+        $errors[] = "Phone number must be 10 digits.";
+    }
+    if (empty($address)) {
+        $errors[] = "Address is required.";
+    }
+    if (empty($password) || strlen($password) < 6) {
+        $errors[] = "Password must be at least 6 characters.";
+    }
+    if ($password !== $confirm_password) {
+        $errors[] = "Passwords do not match.";
+    }
+
+    // Check if username or email already exists
+    if (empty($errors)) {
+        $query = "SELECT id FROM users WHERE email = '$email' OR username = '$username'";
         $result = $conn->query($query);
-        if ($result->num_rows > 0) {
-            echo "<script>alert('Email already exists');</script>";
-        } else {
-            // Check if passwords match
-            if ($password == $confirm_password) {
-                // Hash the password
-                $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+        if ($result && $result->num_rows > 0) {
+            $errors[] = "Email or username already exists.";
+        }
+    }
 
-                // Insert new user into the database
-                $query = "INSERT INTO users (username, full_name, email, phone, password, address) 
-                          VALUES ('$username', '$full_name', '$email', '$phone', '$hashed_password', '$address')";
-                if ($conn->query($query)) {
-                    echo "<script>
-                    alert('Registration successful');
-                    window.location.href = 'login.php';
-                  </script>";
-                } else {
-                    echo "<script>alert('Registration failed. Please try again later.');</script>";
-                }
-            } else {
-                echo "<script>alert('Passwords do not match');</script>";
-            }
+    // If no errors, insert user
+    if (empty($errors)) {
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+        $query = "INSERT INTO users (username, full_name, email, phone, password, address) 
+                  VALUES ('$username', '$full_name', '$email', '$phone', '$hashed_password', '$address')";
+        if ($conn->query($query)) {
+            echo "<script>
+                alert('Registration successful');
+                window.location.href = 'login.php';
+            </script>";
+            exit();
+        } else {
+            $errors[] = "Registration failed. Please try again later.";
         }
     }
 }
 
 $conn->close();
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -170,30 +187,35 @@ h2 {
 <body>
     <div class="register-container">
         <h2>Register</h2>
+        <?php if (!empty($errors)): ?>
+            <div class="error-message">
+                <?php foreach ($errors as $error) echo htmlspecialchars($error) . "<br>"; ?>
+            </div>
+        <?php endif; ?>
         <form method="POST" action="register.php">
             <div class="form-group">
                 <label for="username">Username</label>
-                <input type="text" name="username" required minlength="3" maxlength="50" placeholder="Choose a username" value="<?php echo $_POST['username'] ?? ''; ?>">
+                <input type="text" name="username" required minlength="3" maxlength="50" placeholder="Choose a username" value="<?php echo htmlspecialchars($_POST['username'] ?? ''); ?>">
             </div>
 
             <div class="form-group">
                 <label for="email">Email</label>
-                <input type="email" name="email" required placeholder="Enter your email" value="<?php echo $_POST['email'] ?? ''; ?>">
+                <input type="email" name="email" required placeholder="Enter your email" value="<?php echo htmlspecialchars($_POST['email'] ?? ''); ?>">
             </div>
 
             <div class="form-group">
                 <label for="full_name">Full Name</label>
-                <input type="text" name="full_name" required placeholder="Enter your full name" value="<?php echo $_POST['full_name'] ?? ''; ?>">
+                <input type="text" name="full_name" required placeholder="Enter your full name" value="<?php echo htmlspecialchars($_POST['full_name'] ?? ''); ?>">
             </div>
 
             <div class="form-group">
                 <label for="phone">Phone</label>
-                <input type="tel" name="phone" minlength="10" maxlength="10" placeholder="Enter your phone number" value="<?php echo $_POST['phone'] ?? ''; ?>">
+                <input type="tel" name="phone" minlength="10" maxlength="10" pattern="[0-9]{10}" placeholder="Enter your phone number" value="<?php echo htmlspecialchars($_POST['phone'] ?? ''); ?>">
             </div>
 
             <div class="form-group">
                 <label for="address">Address</label>
-                <textarea name="address" required rows="3" placeholder="Enter your address"><?php echo $_POST['address'] ?? ''; ?></textarea>
+                <textarea name="address" required rows="3" placeholder="Enter your address"><?php echo htmlspecialchars($_POST['address'] ?? ''); ?></textarea>
             </div>
 
             <div class="form-group">

@@ -9,7 +9,7 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
-// Get all orders for the current user
+// Get all orders for the current user, including payment columns
 $sql = "SELECT o.*, 
         GROUP_CONCAT(CONCAT(mi.name, ' x', oi.quantity) SEPARATOR ', ') as items
         FROM orders o
@@ -80,6 +80,17 @@ $result = $conn->query($sql);
             border-radius: 5px;
             margin-bottom: 20px;
         }
+        .payment-info {
+            margin-top: 10px;
+            font-size: 15px;
+        }
+        .payment-method {
+            font-weight: bold;
+        }
+        .payment-status {
+            font-weight: bold;
+        }
+     
     </style>
 </head>
 <body>
@@ -98,11 +109,17 @@ $result = $conn->query($sql);
                     </div>
                     <p><strong>Order Date:</strong> <?php echo date('M d, Y h:i A', strtotime($order['created_at'])); ?></p>
                     <p><strong>Items:</strong> <?php echo $order['items']; ?></p>
-                    <p><strong>Total Amount:</strong> Rs. <?php echo number_format($order['total_amount'], 2); ?></p>
-                 <p><strong>Preferred Time:</strong> <?php echo htmlspecialchars($order['preferred_time']); ?></p>
+                    <p><strong>Total Amount:</strong> $ <?php echo number_format($order['total_amount'], 2); ?></p>
+                    <p><strong>Preferred Time:</strong> <?php echo htmlspecialchars($order['preferred_time']); ?></p>
+                    <p><strong>Comment:</strong> <?php echo htmlspecialchars($order['comment'] ?? 'N/A'); ?></p>
                     <?php if ($order['comments']): ?>
                         <p><strong>Comments:</strong> <?php echo htmlspecialchars($order['comments']); ?></p>
                     <?php endif; ?>
+                    <div class="payment-info">
+                        <span class="payment-method">Payment Method: <?php echo ucfirst($order['payment_method'] ?? 'cash'); ?></span><br>
+                        <span class="payment-status">Payment Status: <?php echo ucfirst($order['payment_status'] ?? 'pending'); ?></span>
+                        
+                    </div>
                 </div>
             <?php endwhile; ?>
         <?php else: ?>

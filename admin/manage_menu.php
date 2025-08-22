@@ -82,7 +82,7 @@ $categories_result = mysqli_query($conn, $categories_query);
                     <td>
                         <?php 
                         $image_path = !empty($row['image']) ? "../uploads/menu/" . $row['image'] : "../assets/images/default-food.jpg";
-                        $display_path = !empty($row['image']) ? "/dummyfood2/uploads/menu/" . $row['image'] : "/dummyfood2/assets/images/default-food.jpg";
+                        $display_path = !empty($row['image']) ? "/dummyfood2/food-pre-ordering-system/uploads/menu/" . $row['image'] : "/dummyfood2/food-pre-ordering-system/assets/images/default-food.jpg";
                         ?>
                         <img src="<?php echo htmlspecialchars($display_path); ?>" 
                              alt="<?php echo htmlspecialchars($row['name']); ?>" 
@@ -90,7 +90,7 @@ $categories_result = mysqli_query($conn, $categories_query);
                     </td>
                     <td><?php echo htmlspecialchars($row['name']); ?></td>
                     <td><?php echo htmlspecialchars($row['category_name']); ?></td>
-                    <td>Rs. <?php echo htmlspecialchars($row['price']); ?></td>
+                    <td>$ <?php echo htmlspecialchars($row['price']); ?></td>
                     <td><?php echo htmlspecialchars($row['description']); ?></td>
                     <td>
                         <span class="badge <?php echo $row['status'] ? 'badge-success' : 'badge-danger'; ?>">
