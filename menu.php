@@ -226,12 +226,123 @@ font-size: 14px;
 <body>
     
 <div class="menu-header">
+    
 
 <h1>Our Menu</h1>
 <p>Discover our delicious offerings</p>
 </div>
 <a href="index.php" class="back-btn">Back to Home</a>
 <div class="container">
+    <!-- search algorithm -->
+    <input type="text" id="searchBox" onkeyup="searchMenu()" placeholder="Search food..." 
+style="padding:10px; width:250px; display:block; margin:10px auto; border-radius:5px;">
+<!-- <script>
+    function searchMenu() {
+    let keyword = document.getElementById("searchBox").value.toLowerCase();
+    let items = document.querySelectorAll('.menu-item');
+
+    items.forEach(item => {
+        let name = item.querySelector('.item-name').innerText.toLowerCase();
+        if (name.includes(keyword)) {
+            item.style.display = "block";
+        } else {
+            item.style.display = "none";
+        }
+    });
+}
+
+</script> -->
+<script>
+function searchMenu() {
+    let keyword = document.getElementById("searchBox").value.toLowerCase();
+    let items = document.querySelectorAll('.menu-item');
+    let sections = document.querySelectorAll('.category-section');
+    let noResult = document.getElementById("noResult");
+
+    let found = false;
+
+    items.forEach(item => {
+        let name = item.querySelector('.item-name').innerText.toLowerCase();
+        if (name.includes(keyword)) {
+            item.style.display = "block";
+            found = true;
+        } else {
+            item.style.display = "none";
+        }
+    });
+
+    // Show / hide categories based on available items
+    sections.forEach(section => {
+        let visibleItems = section.querySelectorAll('.menu-item[style*="block"]');
+
+        if (visibleItems.length > 0) {
+            section.style.display = "block";
+        } else {
+            section.style.display = "none";
+        }
+    });
+
+    // Show "Search Not Found"
+    noResult.style.display = found ? "none" : "block";
+}
+</script>
+
+<!-- upto here search algorithm -->
+<!-- filter  -->
+ <div style="text-align:center; margin:10px 0;">
+    <input type="number" id="minPrice" placeholder="Min Price" style="padding:7px; width:120px;">
+    <input type="number" id="maxPrice" placeholder="Max Price" style="padding:7px; width:120px;">
+    <button onclick="filterPrice()" style="padding:8px 15px; background:black; color:white; border:none; border-radius:5px;">
+        Apply
+    </button>
+</div>
+<script>
+    function filterPrice() {
+    let min = parseFloat(document.getElementById("minPrice").value) || 0;
+    let max = parseFloat(document.getElementById("maxPrice").value) || Infinity;
+
+    let items = document.querySelectorAll('.menu-item');
+
+    items.forEach(item => {
+        let price = parseFloat(item.querySelector('.item-price').innerText.replace('$',''));
+        if (price >= min && price <= max) {
+            item.style.display = "block";
+        } else {
+            item.style.display = "none";
+        }
+    });
+}
+
+</script>
+<!-- sort -->
+ <select id="sortOption" onchange="sortItems()" 
+style="padding:10px; border-radius:5px; display:block; margin:10px auto;">
+    <option value="">Sort by</option>
+    <option value="low">Price: Low to High</option>
+    <option value="high">Price: High to Low</option>
+</select>
+<!-- sort js -->
+<script>
+    function sortItems() {
+    let option = document.getElementById("sortOption").value;
+    let sections = document.querySelectorAll('.menu-grid');
+
+    sections.forEach(grid => {
+        let items = Array.from(grid.children);
+
+        items.sort((a, b) => {
+            let priceA = parseFloat(a.querySelector('.item-price').innerText.replace('$',''));
+            let priceB = parseFloat(b.querySelector('.item-price').innerText.replace('$',''));
+
+            return option === 'low' ? priceA - priceB : priceB - priceA;
+        });
+
+        items.forEach(i => grid.appendChild(i));
+    });
+}
+
+</script>
+
 <?php
 if (empty($menu_by_category)) {
 echo '<div style="color: red; padding: 20px;">No menu items found.</div>';

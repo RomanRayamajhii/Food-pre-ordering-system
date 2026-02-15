@@ -12,18 +12,32 @@ $preferred_time = $_POST['preferred_time'];
 $comments       = $_POST['comments'] ?? '';
 $payment_method = $_POST['payment_method'];
 
+// Use prepared statements to prevent SQL injection
 // Insert order with payment_status 'pending'
-$sql = "INSERT INTO orders (user_id,total_amount,preferred_time,comments,payment_method,payment_status)
-        VALUES ('$user_id','$total_amount','$preferred_time','$comments','$payment_method','pending')";
-mysqli_query($conn,$sql);
+$stmt = $conn->prepare("INSERT INTO orders (user_id, total_amount, preferred_time, comments, payment_method, payment_status) VALUES (?, ?, ?, ?, ?, 'pending')");
+$stmt->bind_param("issss", $user_id, $total_amount, $preferred_time, $comments, $payment_method);
+$stmt->execute();
 $order_id = mysqli_insert_id($conn);
+$stmt->close();
 
 // Insert order items
+$item_stmt = $conn->prepare("SELECT price FROM menu_items WHERE id = ?");
+$order_item_stmt = $conn->prepare("INSERT INTO order_items (order_id, item_id, quantity, price) VALUES (?, ?, ?, ?)");
+
 foreach($_SESSION['cart'] as $item_id => $qty){
-    $item = mysqli_fetch_assoc(mysqli_query($conn,"SELECT price FROM menu_items WHERE id='$item_id'"));
-    mysqli_query($conn,"INSERT INTO order_items (order_id,item_id,quantity,price)
-                        VALUES ('$order_id','$item_id','$qty','".$item['price']."')");
+    // Get the price for the item
+    $item_stmt->bind_param("i", $item_id);
+    $item_stmt->execute();
+    $result = $item_stmt->get_result();
+    $item = $result->fetch_assoc();
+    $price = $item['price'];
+
+    // Insert the order item
+    $order_item_stmt->bind_param("iiid", $order_id, $item_id, $qty, $price);
+    $order_item_stmt->execute();
 }
+$item_stmt->close();
+$order_item_stmt->close();
 
 // PayPal redirect
 if($payment_method=='paypal'){
@@ -32,7 +46,11 @@ if($payment_method=='paypal'){
 }
 
 // Cash on Delivery
-mysqli_query($conn,"UPDATE orders SET payment_status='pending' WHERE id='$order_id'");
+$stmt = $conn->prepare("UPDATE orders SET payment_status='pending' WHERE id=?");
+$stmt->bind_param("i", $order_id);
+$stmt->execute();
+$stmt->close();
+
 unset($_SESSION['cart']);
 header("Location: order_sucess.php?order_id=$order_id&amount=$total_amount");
 
