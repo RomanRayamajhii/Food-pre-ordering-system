@@ -17,8 +17,9 @@
    
     <div class="Gethelp">
         <h3>Get Help</h3>
-        <a href="works.html">How it works?</a><br>
-        <a href="contactus.html">Contact Us</a>
+        <a href="#">About Us</a><br>
+        <a href="#how-it-works">How it works?</a><br>
+        <a href="#">Contact Us</a>
     </div> 
     <div class="callus" id="callus">
         <h3>Call Us</h3>

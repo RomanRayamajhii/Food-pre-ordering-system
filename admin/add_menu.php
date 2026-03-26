@@ -1,7 +1,6 @@
 <?php
 session_start();
-include '../config/db.php'; 
-
+include 'includes/config.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     
@@ -9,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $description = trim($_POST['description']);
     $price = floatval($_POST['price']);
     $category_id = intval($_POST['category_id']);
-    $status = isset($_POST['status']) ? 1 : 0; // Default to active if checked
+    $status = isset($_POST['status']) ? 1 : 0;
 
     // Validate inputs
     if (empty($name) || empty($description) || $price <= 0 || $category_id <= 0) {
@@ -20,64 +19,73 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Handle file upload
     if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
-        $image = uniqid() . '_' . basename($_FILES['image']['name']); // Unique filename
-        $target_dir = "../uploads/menu/";
+        $image = uniqid() . '_' . basename($_FILES['image']['name']);
+        $target_dir = __DIR__ . "/../Uploads/menu/";
         $target_file = $target_dir . $image;
-        $uploadOk = 1;
 
-        // Check if image file is a valid image
+        // Check if directory exists, create if needed
+        if (!is_dir($target_dir)) {
+            mkdir($target_dir, 0755, true);
+        }
+
+        // Validate image
         $check = getimagesize($_FILES['image']['tmp_name']);
         if ($check === false) {
-            $_SESSION['error_message'] = "File is not an image.";
-            $uploadOk = 0;
+            $_SESSION['error_message'] = "File is not a valid image.";
+            header('Location: manage_menu.php');
+            exit();
         }
 
-        // Check file size (e.g., limit to 2MB)
-        if ($_FILES['image']['size'] > 2 * 1024 * 1024) {
-            $_SESSION['error_message'] = "Sorry, your file is too large.";
-            $uploadOk = 0;
+        // Check file size (limit to 5MB)
+        if ($_FILES['image']['size'] > 5 * 1024 * 1024) {
+            $_SESSION['error_message'] = "File size too large. Maximum allowed: 5MB.";
+            header('Location: manage_menu.php');
+            exit();
         }
-        $allowed=['jpg', 'png', 'jpeg', 'gif'];
-        // Allow certain file formats
+
+        // Allow only certain file formats
+        $allowed_types = ['jpg', 'jpeg', 'png','webp'];
         $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
-        if (!in_array($imageFileType, $allowed)) {
-            $_SESSION['error_message'] = "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
-            $uploadOk = 0;
+        
+        if (!in_array($imageFileType, $allowed_types)) {
+            $_SESSION['error_message'] = "Only JPG, JPEG, PNG & WEBP files are allowed.";
+            header('Location: manage_menu.php');
+            exit();
         }
 
-        // Check if $uploadOk is set to 0 by an error
-        if ($uploadOk == 0) {
-            $_SESSION['error_message'] = "Sorry, your file was not uploaded.";
+        // Upload file
+        if (!move_uploaded_file($_FILES['image']['tmp_name'], $target_file)) {
+            $_SESSION['error_message'] = "Failed to upload image file.";
+            header('Location: manage_menu.php');
+            exit();
+        }
+
+        // Save to database
+        $name = mysqli_real_escape_string($conn, $name);
+        $description = mysqli_real_escape_string($conn, $description);
+        $price = floatval($price);
+        $category_id = intval($category_id);
+        $image = mysqli_real_escape_string($conn, $image);
+        $status = intval($status);
+
+        $sql = "INSERT INTO menu_items (name, description, price, category_id, image, status) 
+                VALUES ('$name', '$description', '$price', '$category_id', '$image', '$status')";
+        
+        if (mysqli_query($conn, $sql)) {
+            $_SESSION['success_message'] = "Menu item added successfully!";
         } else {
-            // If everything is ok, try to upload file
-            if (move_uploaded_file($_FILES['image']['tmp_name'], $target_file)) {
-                // Escape inputs to prevent SQL injection (not foolproof)
-                $name = mysqli_real_escape_string($conn, $nam);
-                $description = mysqli_real_escape_string($conn, $description);
-                $price = mysqli_real_escape_string($conn, $price);
-                $category_id = mysqli_real_escape_string($conn, $category_id);
-                $image = mysqli_real_escape_string($conn, $image);
-                $status = mysqli_real_escape_string($conn, $status);
-
-                // Prepare the SQL query
-                $sql = "INSERT INTO menu_items (name, description, price, category_id, image, status) 
-                        VALUES ('$name', '$description', '$price', '$category_id', '$image', '$status')";
-
-                // Execute the query
-                if (mysqli_query($conn, $sql)) {
-                    $_SESSION['success_message'] = "Menu item added successfully!";
-                } else {
-                    $_SESSION['error_message'] = "Error adding menu item: " . mysqli_error($conn);
-                }
-            } else {
-                $_SESSION['error_message'] = "Sorry, there was an error uploading your file.";
+            $_SESSION['error_message'] = "Database error: " . mysqli_error($conn);
+            // Clean up uploaded file if database insertion failed
+            if (file_exists($target_file)) {
+                unlink($target_file);
             }
         }
     } else {
-        $_SESSION['error_message'] = "No image file uploaded or an error occurred during upload.";
+        $_SESSION['error_message'] = "Please select an image file.";
+        header('Location: manage_menu.php');
+        exit();
     }
 
-    // goto manage menu page
     header('Location: manage_menu.php');
     exit();
 }

@@ -1,11 +1,10 @@
 <?php
 session_start();
 include 'config/db.php';
-include 'layout/header.php'; // Assuming you have a header file
 
 if (!isset($_GET['query']) || empty(trim($_GET['query']))) {
     echo "<h1>Please enter a search term.</h1>";
-    include 'layout/footer.php'; // Assuming you have a footer file
+    include 'footer.php';
     exit();
 }
 
@@ -13,7 +12,7 @@ $search_query = $_GET['query'];
 $search_term = "%" . $search_query . "%";
 
 // Use prepared statements to prevent SQL injection
-$stmt = $conn->prepare("SELECT id, name, description, price, image_path FROM menu_items WHERE name LIKE ? OR description LIKE ?");
+$stmt = $conn->prepare("SELECT id, name, description, price, image FROM menu_items WHERE name LIKE ? OR description LIKE ?");
 $stmt->bind_param("ss", $search_term, $search_term);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -28,7 +27,7 @@ if ($result->num_rows > 0) {
         echo '<div class="menu-item">';
         echo '<h3>' . htmlspecialchars($item['name']) . '</h3>';
         echo '<p>' . htmlspecialchars($item['description']) . '</p>';
-        echo '<p>Price: $' . htmlspecialchars($item['price']) . '</p>';
+        echo '<p>Price: Rs. ' . htmlspecialchars($item['price']) . '</p>';
         echo '</div>';
     }
     echo '</div>';
@@ -38,5 +37,5 @@ if ($result->num_rows > 0) {
 echo '</div>';
 
 $stmt->close();
-include 'layout/footer.php'; // Assuming you have a footer file
+include 'footer.php';
 ?>

@@ -81,8 +81,7 @@ $categories_result = mysqli_query($conn, $categories_query);
                 <tr class="<?php echo $row['status'] == 0 ? 'table-secondary' : ''; ?>">
                     <td>
                         <?php 
-                        $image_path = !empty($row['image']) ? "../uploads/menu/" . $row['image'] : "../assets/images/default-food.jpg";
-                        $display_path = !empty($row['image']) ? "/dummyfood2/food-pre-ordering-system/uploads/menu/" . $row['image'] : "/dummyfood2/food-pre-ordering-system/assets/images/default-food.jpg";
+                        $display_path = !empty($row['image']) ? "../Uploads/menu/" . $row['image'] : "../assets/images/default-food.jpg";
                         ?>
                         <img src="<?php echo htmlspecialchars($display_path); ?>" 
                              alt="<?php echo htmlspecialchars($row['name']); ?>" 
@@ -90,7 +89,7 @@ $categories_result = mysqli_query($conn, $categories_query);
                     </td>
                     <td><?php echo htmlspecialchars($row['name']); ?></td>
                     <td><?php echo htmlspecialchars($row['category_name']); ?></td>
-                    <td>$ <?php echo htmlspecialchars($row['price']); ?></td>
+                    <td>Rs. <?php echo htmlspecialchars($row['price']); ?></td>
                     <td><?php echo htmlspecialchars($row['description']); ?></td>
                     <td>
                         <span class="badge <?php echo $row['status'] ? 'badge-success' : 'badge-danger'; ?>">
@@ -143,11 +142,15 @@ $categories_result = mysqli_query($conn, $categories_query);
                     </div>
                     <div class="form-group">
                         <label>Price *</label>
-                        <input type="number" step="0.01" class="form-control" name="price" id="editItemPrice" required>
+                        <input type="number"  class="form-control" name="price" id="editItemPrice" required>
                     </div>
                     <div class="form-group">
                         <label>Description</label>
                         <textarea class="form-control" name="description" id="editItemDescription" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Image (Leave blank to keep current)</label>
+                        <input type="file" class="form-control-file" name="image">
                     </div>
                     <div class="form-group">
                         <div class="custom-control custom-switch">
@@ -390,17 +393,17 @@ $categories_result = mysqli_query($conn, $categories_query);
         top: 0;
         width: 100%;
         height: 100%;
-        overflow: hidden;
+        overflow-y: auto;
         align-items: center;
         justify-content: center;
-
+        background-color: rgba(0,0,0,0.4);
     }
   
     .modal-content {
         background: #ffffff;
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         width: 80%;
-        margin:30px auto;
+        margin: 10vh auto;
         border-radius: 8px;
         max-width: 600px;
     }
@@ -432,14 +435,14 @@ $categories_result = mysqli_query($conn, $categories_query);
         margin-bottom: 15px;
     }
     .form-control {
-        height: 30px;
+        height: 40px;
     
     }
   
     .form-control, .form-control-file {
         width: 100%;
         font-size: 14px;
-        padding: 10px;
+        padding: 8px 15px;
         margin: 5px 0;
         border: 1px solid #ced4da;
         border-radius: 5px;

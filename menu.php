@@ -14,6 +14,7 @@ WHERE m.status = 1
 ORDER BY c.id, m.name";
 $menu_items = $conn->query($menu_sql);
 
+
 // Organize items by category
 $menu_by_category = [];
 while($item = $menu_items->fetch_assoc()) {
@@ -27,6 +28,7 @@ $menu_by_category[$item['category_name']][] = $item;
 <title>Our Menu</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 <style>
 * {
 margin: 0;
@@ -52,7 +54,12 @@ max-width: 1200px;
 margin: 0 auto;
 padding: 20px;
 }
-
+ .logo {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
 .menu-header {
 text-align: center;
 padding: 40px 0;
@@ -197,14 +204,19 @@ background-color: #333;
 
 .success-alert {
 position: fixed;
-top: 20px;
-right: 20px;
-padding: 15px 25px;
-background-color: #000;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background-color: rgba(0, 0, 0, 0.7);
 color: #fff;
-border-radius: 5px;
-display: none;
+display: none; /* Flex when active */
+justify-content: center;
+align-items: center;
+flex-direction: column;
 z-index: 1000;
+font-size: 20px;
+backdrop-filter: blur(5px);
 }
 
 @media (max-width: 768px) {
@@ -221,12 +233,82 @@ padding: 8px 15px;
 font-size: 14px;
 }
 }
+
+/* Navbar Styles */
+.navbar {
+    background: #000;
+    padding: 1rem;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    height: 70px;
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    color: #fff;
+    text-decoration: none;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.nav-links {
+    display: flex;
+    gap: 2rem;
+}
+
+.nav-links a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.cart-count {
+    position: relative;
+    top: -10px;
+    left: -5px;
+    background-color: #ff0000;
+    color: #fff;
+    padding: 2px 5px;
+    border-radius: 50%;
+    font-size: 0.8rem;
+}
 </style>
 </head>
 <body>
-    
+    <div>
+        <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.php" class="logo">Food Pre Ordering System</a>
+            <div class="nav-links">
+                <?php if(isset($_SESSION['user_id'])): ?>
+                    <a href="order_history.php">My Orders</a>
+                    <a href="logout.php">Logout</a>
+                    <a href="cart.php" class="cart-icon">
+                        <i class="fas fa-shopping-cart" style="color: white; font-family: 'Font Awesome 5 Free'; font-weight: 900;"></i>
+                        <?php if(isset($_SESSION['cart']) && count($_SESSION['cart']) > 0): ?>
+                            <span class="cart-count"><?php echo array_sum($_SESSION['cart']); ?></span>
+                        <?php endif; ?>
+                    </a>
+                <?php else: ?>
+                    <a href="login.php">Login</a>
+                    <a href="register.php">Register</a>
+                <?php endif; ?>
+            </div>
+        </div>
+    </nav>
+    </div> <br>
 <div class="menu-header">
-    
+ 
 
 <h1>Our Menu</h1>
 <p>Discover our delicious offerings</p>
@@ -236,22 +318,7 @@ font-size: 14px;
     <!-- search algorithm -->
     <input type="text" id="searchBox" onkeyup="searchMenu()" placeholder="Search food..." 
 style="padding:10px; width:250px; display:block; margin:10px auto; border-radius:5px;">
-<!-- <script>
-    function searchMenu() {
-    let keyword = document.getElementById("searchBox").value.toLowerCase();
-    let items = document.querySelectorAll('.menu-item');
 
-    items.forEach(item => {
-        let name = item.querySelector('.item-name').innerText.toLowerCase();
-        if (name.includes(keyword)) {
-            item.style.display = "block";
-        } else {
-            item.style.display = "none";
-        }
-    });
-}
-
-</script> -->
 <script>
 function searchMenu() {
     let keyword = document.getElementById("searchBox").value.toLowerCase();
@@ -304,7 +371,7 @@ function searchMenu() {
     let items = document.querySelectorAll('.menu-item');
 
     items.forEach(item => {
-        let price = parseFloat(item.querySelector('.item-price').innerText.replace('$',''));
+        let price = parseFloat(item.querySelector('.item-price').innerText.replace('Rs. ',''));
         if (price >= min && price <= max) {
             item.style.display = "block";
         } else {
@@ -331,8 +398,8 @@ style="padding:10px; border-radius:5px; display:block; margin:10px auto;">
         let items = Array.from(grid.children);
 
         items.sort((a, b) => {
-            let priceA = parseFloat(a.querySelector('.item-price').innerText.replace('$',''));
-            let priceB = parseFloat(b.querySelector('.item-price').innerText.replace('$',''));
+            let priceA = parseFloat(a.querySelector('.item-price').innerText.replace('Rs. ',''));
+            let priceB = parseFloat(b.querySelector('.item-price').innerText.replace('Rs. ',''));
 
             return option === 'low' ? priceA - priceB : priceB - priceA;
         });
@@ -380,7 +447,7 @@ onerror="this.src='assets/images/default-food.jpg'">
 <div class="item-info">
 <h3 class="item-name"><?php echo $item['name']; ?></h3>
 <p class="item-description"><?php echo $item['description']; ?></p>
-<div class="item-price">$ <?php echo number_format($item['price'], 2); ?></div>
+<div class="item-price">Rs. <?php echo number_format($item['price'], 2); ?></div>
 <form class="add-to-cart-form" onsubmit="return addToCart(this, event)">
 <input type="hidden" name="item_id" value="<?php echo $item['id']; ?>">
 
@@ -400,7 +467,12 @@ onerror="this.src='assets/images/default-food.jpg'">
 <?php endforeach; ?>
 </div>
 
-<div id="successAlert" class="success-alert">Item added to cart!</div>
+<div id="successAlert" class="success-alert">
+    <div style="background: white; color: black; padding: 30px 50px; border-radius: 15px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
+        <i class="fas fa-check-circle" style="font-size: 50px; color: #28a745; margin-bottom: 15px;"></i>
+        <p style="font-weight: 600;">Item added to cart!</p>
+    </div>
+</div>
 <script>
 function incrementQuantity(button) {
 const input = button.parentElement.querySelector('.quantity');
@@ -450,13 +522,25 @@ body: new FormData(form)
 })
 .then(response => response.json())
 .then(data => {
-if(data.success) {
-const alert = document.getElementById('successAlert');
-alert.style.display = 'block';
-setTimeout(() => {
-alert.style.display = 'none';
-}, 2000);
-}
+    if(data.success) {
+        const alert = document.getElementById('successAlert');
+        alert.style.display = 'flex';
+        setTimeout(() => {
+            alert.style.display = 'none';
+        }, 500);
+
+        // Update cart count in navbar dynamically
+        let cartCountSpan = document.querySelector('.cart-count');
+        let addedQty = parseInt(form.querySelector('.quantity').value);
+        
+        if (cartCountSpan) {
+            cartCountSpan.textContent = parseInt(cartCountSpan.textContent) + addedQty;
+        } else {
+            // If span doesn't exist (cart was empty), create it
+            const cartIcon = document.querySelector('.cart-icon');
+            cartIcon.insertAdjacentHTML('beforeend', `<span class="cart-count">${addedQty}</span>`);
+        }
+    }
 });
 
 return false;

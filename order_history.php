@@ -109,7 +109,7 @@ $result = $conn->query($sql);
                     </div>
                     <p><strong>Order Date:</strong> <?php echo date('M d, Y h:i A', strtotime($order['created_at'])); ?></p>
                     <p><strong>Items:</strong> <?php echo $order['items']; ?></p>
-                    <p><strong>Total Amount:</strong> $ <?php echo number_format($order['total_amount'], 2); ?></p>
+                    <p><strong>Total Amount:</strong> Rs. <?php echo number_format($order['total_amount'], 2); ?></p>
                     <p><strong>Preferred Time:</strong> <?php echo htmlspecialchars($order['preferred_time']); ?></p>
                     <p><strong>Comment:</strong> <?php echo htmlspecialchars($order['comment'] ?? 'N/A'); ?></p>
                     <?php if ($order['comments']): ?>

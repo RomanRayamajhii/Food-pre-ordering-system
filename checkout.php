@@ -59,22 +59,22 @@ foreach ($_SESSION['cart'] as $item_id => $quantity) {
         <?php foreach($cart_items as $item): ?>
         <tr id="item_<?php echo $item['id']; ?>">
             <td><?php echo $item['name']; ?></td>
-            <td>$ <?php echo $item['price']; ?></td>
+            <td>Rs. <?php echo $item['price']; ?></td>
             <td><?php echo $item['quantity']; ?></td>
-            <td>$ <?php echo $item['subtotal']; ?></td>
+            <td>Rs. <?php echo $item['subtotal']; ?></td>
             <td><button class="remove-btn" onclick="removeItem(<?php echo $item['id']; ?>)">Remove</button></td>
         </tr>
         <?php endforeach; ?>
         <tr>
             <td colspan="3"><strong>Total</strong></td>
-            <td colspan="2"><strong>$ <span id="total"><?php echo $total; ?></span></strong></td>
+            <td colspan="2"><strong>Rs. <span id="total"><?php echo $total; ?></span></strong></td>
         </tr>
     </table>
 
   <form id="checkoutForm" action="process_order.php" method="POST">
     <div class="form-group">
-        <label>Preferred Time:</label>
-        <input type="text" name="preferred_time" id="preferred_time" placeholder="12:00 PM" required>
+        <label>Preferred Date & Time:</label>
+        <input type="text" name="preferred_time" id="preferred_time" placeholder="Select Date and Time" required>
     </div>
     <div class="form-group">
         <label>Comments (Optional):</label>
@@ -95,9 +95,19 @@ foreach ($_SESSION['cart'] as $item_id => $quantity) {
             <!-- PayPal -->
             <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 8px 12px; border: 2px solid #0070ba; border-radius: 8px;">
                 <input type="radio" name="payment_method" value="paypal" style="accent-color: #0070ba; width: 18px; height: 18px;">
-                <img src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_111x69.jpg" alt="PayPal" style="height: 32px; width: auto;">
+                <img src="image/paypal.png" alt="PayPal" style="height: 32px; width: auto;">
                 <span style="font-size: 16px; font-weight: 500; color: #0070ba;">PayPal</span>
             </label>
+            <!-- eSewa -->
+            <label style="display: flex; align-items: center; gap: 10px
+            ; cursor: pointer; padding: 8px 
+            12px; border: 2px solid #00A950; border-radius: 8px;">
+                <input type="radio" name="payment_method" value="esewa" style="accent-color: #00A950; width: 18px; height: 18px;">
+                <img src="image/esewa.png" alt="eSewa" style="height: 32px; width: auto;">
+                <span style="font-size: 16px; font-weight: 500; color: #00A950;">eSewa</span>
+            
+            </label>
+
         </div>
     </div>
 
@@ -109,12 +119,14 @@ foreach ($_SESSION['cart'] as $item_id => $quantity) {
 
 <script>
 $(document).ready(function(){
-    // Flatpickr Time Picker
+    // Flatpickr Date & Time Picker
     $("#preferred_time").flatpickr({
         enableTime: true,
-        noCalendar: true,
-        dateFormat: "h:i K",
-        time_24hr: false
+        dateFormat: "Y-m-d h:i K",
+        time_24hr: false,
+        minDate: "today",
+        maxDate: new Date().fp_incr(15),
+        allowInput: false
     });
 });
 

@@ -3,6 +3,12 @@
 session_start();
 include 'includes/config.php';
 
+// If already logged in, redirect to dashboard
+if (isset($_SESSION['username'])) {
+    header("Location: ./dashboard.php");
+    exit;
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Trim inputs
     $username = trim($_POST['username']);
@@ -10,6 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $sql="select * from users where username='$username' And password='$password'";
     $result = mysqli_query($conn, $sql);
 if( mysqli_num_rows($result)==1){
+    $user = mysqli_fetch_assoc($result);
     $_SESSION['username']=$username;
     $_SESSION['user_id'] = $user['id'];
         header("Location: ./dashboard.php");

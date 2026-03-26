@@ -185,13 +185,13 @@ table tr:hover {
             <tr>
                 <td><?= $it['name'] ?></td>
                 <td><?= $it['quantity'] ?></td>
-                <td>$ <?= $it['price'] ?></td>
-                <td>$ <?= $it['quantity'] * $it['price'] ?></td>
+                <td>Rs. <?= $it['price'] ?></td>
+                <td>Rs. <?= $it['quantity'] * $it['price'] ?></td>
             </tr>
             <?php endforeach; ?>
         </table>
 
-        <p class="total"><strong>Total Amount to be Paid:</strong> $ <?= $order['total_amount'] ?></p>
+        <p class="total"><strong>Total Amount to be Paid:</strong> Rs. <?= $order['total_amount'] ?></p>
 
         <div class="links">
             <a href="menu.php">Order More</a>

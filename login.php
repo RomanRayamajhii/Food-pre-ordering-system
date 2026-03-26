@@ -15,14 +15,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $password = $_POST['password'];
 
     // Create the SQL query (fetching status also)
-    $query = "SELECT id, email, phone, password, full_name, status 
-              FROM users 
-              WHERE email = '$login_id'";
-    $result = mysqli_query($conn, $query);
+    $stmt = $conn->prepare("SELECT id, email, phone, password, full_name, status FROM users WHERE email = ? OR username = ?");
+    $stmt->bind_param("ss", $login_id, $login_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
     // Check if the user exists
-    if (mysqli_num_rows($result) === 1) {
-        $user = mysqli_fetch_assoc($result);
+    if ($result->num_rows === 1) {
+        $user = $result->fetch_assoc();
 
         // Check if the user is blocked
         if (strtolower($user['status']) === 'blocked') {
@@ -159,7 +159,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
        
         <form action="" method="POST">
             <div class="form-group">
-                <label for="login_id">Email Address</label>
+                <label for="login_id">Email or Username</label>
                 <input type="text" name="login_id" id="login_id" required>
             </div>
             <div class="form-group">

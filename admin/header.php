@@ -29,12 +29,12 @@
         nav {
             margin-top: 20px;
         }
-     nav a {
+        nav a {
         text-decoration: none;
         color: white;
         padding: 10px 20px;
         margin: 0 10px;
-        width: 20%;
+        width: 15%;
         border-radius: 5px;
         transition: background-color 0.3s ease;
     }

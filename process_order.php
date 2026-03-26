@@ -1,5 +1,6 @@
 <?php
 session_start();
+ini_set('display_errors', 1);
 include 'config/db.php';
 
 if(!isset($_SESSION['user_id']) || empty($_SESSION['cart'])){
@@ -38,6 +39,12 @@ foreach($_SESSION['cart'] as $item_id => $qty){
 }
 $item_stmt->close();
 $order_item_stmt->close();
+//eswa redirect
+if($payment_method=='esewa'){
+    header("Location: esewa_redirect.php?order_id=$order_id&amount=$total_amount");
+    exit();
+}
+
 
 // PayPal redirect
 if($payment_method=='paypal'){

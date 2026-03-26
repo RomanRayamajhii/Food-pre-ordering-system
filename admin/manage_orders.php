@@ -96,7 +96,7 @@ if (!$result) die("Query failed: " . mysqli_error($conn));
                         <tr>
                             <td>#<?php echo $row['id']; ?></td>
                             <td><?php echo htmlspecialchars($row['username'] ?? 'N/A'); ?></td>
-                            <td>$<?php echo number_format($row['total_amount'], 2); ?></td>
+                            <td>Rs. <?php echo number_format($row['total_amount'], 2); ?></td>
                             <td><?php echo ucfirst($row['payment_method'] ?? 'cash'); ?></td>
                             <td>
                                 <span class="badge <?php echo ($row['payment_status']=='completed')?'status-completed':(($row['payment_status']=='pending')?'status-pending':'status-cancelled'); ?>">
@@ -176,7 +176,7 @@ while ($row = mysqli_fetch_assoc($result)) :
                 <p><strong>Preferred Time:</strong> <?php echo htmlspecialchars($row['preferred_time']); ?></p>
                 <p><strong>Status:</strong> <?php echo $row['status']; ?></p>
                 <p><strong>Payment Status:</strong> <?php echo $row['payment_status']; ?></p>
-                <p><strong>Total Amount:</strong> $<?php echo number_format($row['total_amount'],2); ?></p>
+                <p><strong>Total Amount:</strong> Rs. <?php echo number_format($row['total_amount'],2); ?></p>
                 <p><strong>Comments:</strong> <?php echo htmlspecialchars($row['comments']); ?></p>
                 <h5>Order Items</h5>
                 <table class="table">
@@ -192,16 +192,16 @@ while ($row = mysqli_fetch_assoc($result)) :
                         ?>
                         <tr>
                             <td><?php echo $item['menu_name']; ?></td>
-                            <td>$<?php echo number_format($item['price'],2); ?></td>
+                            <td>Rs. <?php echo number_format($item['price'],2); ?></td>
                             <td><?php echo $item['quantity']; ?></td>
-                            <td>$<?php echo number_format($subtotal,2); ?></td>
+                            <td>Rs. <?php echo number_format($subtotal,2); ?></td>
                         </tr>
                         <?php endwhile; ?>
                     </tbody>
                     <tfoot>
                         <tr>
                             <th colspan="3">Total: </th>
-                            <th>$<?php echo number_format($total,2); ?></th>
+                            <th>Rs. <?php echo number_format($total,2); ?></th>
                         </tr>
                     </tfoot>
                 </table>

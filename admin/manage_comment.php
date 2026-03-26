@@ -12,7 +12,8 @@ include "./header.php";
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_comment'])) {
         $userId = 1; // Hardcoded user ID
         $comment = $conn->real_escape_string($_POST['comment']);
-        $conn->query("INSERT INTO comments (user_id, comment, created_at) VALUES ('$userId', '$comment', NOW())");
+        $rating = intval($_POST['rating'] ?? 5);
+        $conn->query("INSERT INTO comments (user_id, comment, rating, created_at) VALUES ('$userId', '$comment', '$rating', NOW())");
         header("Location: " . $_SERVER['PHP_SELF']);
         exit;
     }
@@ -164,6 +165,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_comment'])) {
     background-color: #2e5cb8;
 }
 
+.star-rating {
+    color: #ffc107;
+    font-size: 14px;
+}
 </style>
 </head>
 <body>
@@ -173,11 +178,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_comment'])) {
 
         while ($row = $result->fetch_assoc()) {
             $formattedTime = date('d M Y, H:i', strtotime($row['created_at']));
+            $rating = isset($row['rating']) ? intval($row['rating']) : 0;
+            $stars = "";
+            for($i=1; $i<=5; $i++) {
+                $stars .= ($i <= $rating) ? "<i class='fa-solid fa-star'></i>" : "<i class='fa-regular fa-star'></i>";
+            }
             echo "
             <div class='show-comments'>
                 <div class='icon'><i class='fa-regular fa-user'></i></div>
                 <div class='comment-section'>
                     <p><strong>{$row['username']}:</strong> <span style='font-size: 12px; color: grey;'>{$formattedTime}</span></p>
+                    <div class='star-rating'>{$stars}</div>
                     <p>{$row['comment']}</p>
                 </div>
                 <form method='post' style='margin-left: auto;'>
@@ -198,4 +209,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_comment'])) {
 
 </body>
 </html>
-

@@ -120,15 +120,15 @@ unset($_SESSION['cart']);
                     <tr>
                         <td><?php echo $it['name']; ?></td>
                         <td><?php echo $it['quantity']; ?></td>
-                        <td>$ <?php echo number_format($it['price'],2); ?></td>
-                        <td>$ <?php echo number_format($it['price'] * $it['quantity'],2); ?></td>
+                        <td>Rs. <?php echo number_format($it['price'],2); ?></td>
+                        <td>Rs. <?php echo number_format($it['price'] * $it['quantity'],2); ?></td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
 
         <div class="total">
-            Total Paid: $ <?php echo number_format($order['total_amount'],2); ?>
+            Total Paid: Rs. <?php echo number_format($order['total_amount'],2); ?>
         </div>
     </div>
     <?php endif; ?>
