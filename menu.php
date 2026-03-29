@@ -1,6 +1,7 @@
 <?php
 session_start();
 include 'config/db.php';
+include 'algorithm/simple_recommendation.php';
 
 // Get all categories
 $cat_sql = "SELECT * FROM categories WHERE status = 1";
@@ -10,7 +11,7 @@ $categories = $conn->query($cat_sql);
 $menu_sql = "SELECT m.*, c.name as category_name
 FROM menu_items m
 JOIN categories c ON m.category_id = c.id
-WHERE m.status = 1
+WHERE c.status = 1
 ORDER BY c.id, m.name";
 $menu_items = $conn->query($menu_sql);
 
@@ -19,6 +20,13 @@ $menu_items = $conn->query($menu_sql);
 $menu_by_category = [];
 while($item = $menu_items->fetch_assoc()) {
 $menu_by_category[$item['category_name']][] = $item;
+}
+
+// Get recommendations for logged-in users
+$recommendations = [];
+if (isset($_SESSION['user_id'])) {
+    $rec_system = new SimpleRecommendationSystem($conn);
+    $recommendations = $rec_system->getRecommendations($_SESSION['user_id'], 4);
 }
 ?>
 
@@ -314,6 +322,56 @@ font-size: 14px;
 <p>Discover our delicious offerings</p>
 </div>
 <a href="index.php" class="back-btn">Back to Home</a>
+
+<!-- Personalized Recommendations Section -->
+<?php if (isset($_SESSION['user_id']) && !empty($recommendations)): ?>
+<div class="container" style="margin-bottom: 40px;">
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 15px; color: white; text-align: center; margin-bottom: 30px;">
+        <h2 style="font-size: 28px; margin-bottom: 10px;">🌟 Personalized Recommendations</h2>
+        <p style="font-size: 16px; opacity: 0.9;">Based on your preferences and popular choices</p>
+    </div>
+    
+    <div class="menu-grid">
+        <?php foreach($recommendations as $item): ?>
+        <div class="menu-item" style="border: 2px solid #667eea; position: relative;">
+            <div style="position: absolute; top: 10px; right: 10px; background: #667eea; color: white; padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: bold;">
+                RECOMMENDED
+            </div>
+            <?php
+            $image_path = !empty($item['image'])
+                ? "Uploads/menu/" . $item['image']
+                : "assets/images/default-food.jpg";
+            
+            if (!empty($item['image']) && !file_exists($image_path)) {
+                $image_path = "assets/images/default-food.jpg";
+            }
+            ?>
+            <img src="<?php echo htmlspecialchars($image_path); ?>"
+                 alt="<?php echo htmlspecialchars($item['name']); ?>"
+                 onerror="this.src='assets/images/default-food.jpg'">
+            <div class="item-info">
+                <h3 class="item-name"><?php echo $item['name']; ?></h3>
+                <p class="item-description"><?php echo $item['description']; ?></p>
+                <div class="item-price">Rs. <?php echo number_format($item['price'], 2); ?></div>
+                <div style="font-size: 12px; color: #667eea; font-style: italic; margin-bottom: 15px;">
+                    <?php echo $item['recommendation_reason']; ?>
+                </div>
+                <form class="add-to-cart-form" onsubmit="return addToCart(this, event)">
+                    <input type="hidden" name="item_id" value="<?php echo $item['id']; ?>">
+                    <div class="selector">
+                        <button type="button" class="quantity-btn" onclick="decrementQuantity(this)">-</button>
+                        <input type="number" class="quantity" name="quantity" value="1" min="1" max="15">
+                        <button type="button" class="quantity-btn" onclick="incrementQuantity(this)">+</button>
+                    </div>
+                    <button type="submit" class="add-to-cart-btn">Add to Cart</button>
+                </form>
+            </div>
+        </div>
+        <?php endforeach; ?>
+    </div>
+</div>
+<?php endif; ?>
+
 <div class="container">
     <!-- search algorithm -->
     <input type="text" id="searchBox" onkeyup="searchMenu()" placeholder="Search food..." 
@@ -433,7 +491,7 @@ echo '<div style="color: red; padding: 20px;">No menu items found.</div>';
 <?php
 // Construct image path
 $image_path = !empty($item['image'])
-? "uploads/menu/" . $item['image']
+? "Uploads/menu/" . $item['image']
 : "assets/images/default-food.jpg";
 
 // Check if file exists, otherwise use default
@@ -505,7 +563,10 @@ tab.classList.add('active');
 });
 
 sections.forEach(section => {
-if(category === 'all' || section.dataset.category === category) {
+if(category === 'all') {
+// For "All" category, show all sections (since only active categories are in the DOM)
+section.style.display = 'block';
+} else if (section.dataset.category === category) {
 section.style.display = 'block';
 } else {
 section.style.display = 'none';

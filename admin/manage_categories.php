@@ -30,6 +30,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     exit();
 }
 
+// Handle update of category name
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'update') {
+    $id = intval($_POST['id']);
+    $name = mysqli_real_escape_string($conn, $_POST['name']);
+    $description = mysqli_real_escape_string($conn, $_POST['description']);
+    
+    if ($id > 0 && !empty($name)) {
+        $update_query = "UPDATE categories SET name = '$name', description = '$description' WHERE id = $id";
+        if (!mysqli_query($conn, $update_query)) {
+            $_SESSION['error_message'] = "Error updating category: " . mysqli_error($conn);
+        } else {
+            $_SESSION['success_message'] = "Category updated successfully!";
+        }
+    } else {
+        $_SESSION['error_message'] = "Invalid category data.";
+    }
+
+    // Redirect to avoid resubmission
+    header('Location: manage_categories.php');
+    exit();
+}
+
+// Handle activate/deactivate category
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'toggle_status') {
+    $id = intval($_POST['id']);
+    
+    if ($id > 0) {
+        // Get current status
+        $status_query = "SELECT status FROM categories WHERE id = $id";
+        $status_result = mysqli_query($conn, $status_query);
+        $current_status = mysqli_fetch_assoc($status_result)['status'];
+        
+        // Toggle status (1 becomes 0, 0 becomes 1)
+        $new_status = $current_status ? 0 : 1;
+        
+        $update_query = "UPDATE categories SET status = $new_status WHERE id = $id";
+        if (!mysqli_query($conn, $update_query)) {
+            $_SESSION['error_message'] = "Error updating category status: " . mysqli_error($conn);
+        } else {
+            $status_text = $new_status ? 'activated' : 'deactivated';
+            $_SESSION['success_message'] = "Category $status_text successfully!";
+        }
+    } else {
+        $_SESSION['error_message'] = "Invalid category ID.";
+    }
+
+    // Redirect to avoid resubmission
+    header('Location: manage_categories.php');
+    exit();
+}
+
 // Fetch all categories
 $cat_sql = "SELECT * FROM categories";
 $categories = mysqli_query($conn, $cat_sql);
@@ -92,7 +143,21 @@ if (!$categories) {
                 <td><?php echo htmlspecialchars($row['description']); ?></td>
                 <td><?php echo $row['status'] ? 'Active' : 'Inactive'; ?></td>
                 <td>
-                    <form action="manage_categories.php" method="POST" style="display:inline;">
+                    <!-- Update Button -->
+                    <a href="update_category.php?id=<?php echo $row['id']; ?>" class="update-btn">Update</a>
+                    
+                    <!-- Toggle Status Button -->
+                    <form action="manage_categories.php" method="POST" style="display:inline; margin-left: 5px;">
+                        <input type="hidden" name="action" value="toggle_status">
+                        <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
+                        <button type="submit" class="<?php echo $row['status'] ? 'deactivate-btn' : 'activate-btn'; ?>" 
+                                onclick="return confirm('Are you sure you want to <?php echo $row['status'] ? 'deactivate' : 'activate'; ?> this category?');">
+                            <?php echo $row['status'] ? 'Deactivate' : 'Activate'; ?>
+                        </button>
+                    </form>
+                    
+                    <!-- Delete Button -->
+                    <form action="manage_categories.php" method="POST" style="display:inline; margin-left: 5px;">
                         <input type="hidden" name="action" value="delete">
                         <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
                         <button type="submit" class="delete-btn" onclick="return confirm('Are you sure you want to delete this category?');">Delete</button>
@@ -102,27 +167,29 @@ if (!$categories) {
         <?php endwhile; ?>
     </table>
     </div>
-    <button class="add-btn" onclick="document.getElementById('addCategoryModal').style.display='block';">Add New Category</button>
+    <a href="add_category.php" class="add-btn">Add New Category</a>
 
-    <!-- Add Category Modal -->
-    <div id="addCategoryModal" style="display:none;">
-        <div class="modal-content">
-            <span onclick="document.getElementById('addCategoryModal').style.display='none';" class="close">&times;</span>
-            <h2>Add New Category</h2>
-            <form action="add_category.php" method="POST">
-                <label for="name">Category Name</label>
-                <input type="text" id="name" name="name" required>
-                <label for="description">Description</label>
-                <textarea id="description" name="description" rows="3" required></textarea>
-                <label for="status">Active</label>
-                <input type="checkbox" id="status" name="status"  class="checkbox"checked>
-                <button type="submit" class="add-btn" style="float:right;
-               margin-bottom:20px;">Add Category</button>
-            </form>
-        </div>
-        </div>
-        </body>
-        </html>
+    <style>
+        .add-btn {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+            display: inline-block;
+            margin-top: 20px;
+        }
+
+        .add-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</body>
+</html>
 <style>
 *{
     margin: 0;
@@ -228,6 +295,50 @@ table tr:nth-child(odd){
     background-color:rgb(243, 81, 81);
 }
 
+.update-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.update-btn:hover {
+    background-color: #0056b3;
+}
+
+.activate-btn {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.activate-btn:hover {
+    background-color: #1e7e34;
+}
+
+.deactivate-btn {
+    background-color: #ffc107;
+    color: #333;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.deactivate-btn:hover {
+    background-color:rgb(197, 148, 0);
+}
+
 .add-btn {
     background-color: #4CAF50;
     color: white;
@@ -242,68 +353,6 @@ table tr:nth-child(odd){
 .add-btn:hover {
     background-color: #45a049;
 }
-.modal {
-    display: none;
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.4);
-}
-
-.modal-content {
-    background-color: #fefefe;
-    margin: 10% auto;
-    padding: 30px;
-    border: 1px solid #888;
-    width: 40%;
-    border-radius: 8px;
-}
-
-.close {
-    color: black;
-    font-size: 28px;
-    cursor: pointer;
-    float: right;
-}
-
-.close:hover,
-.close:focus {
-    opacity: 0.5;
-}
-
-
-label {
-    display: block;
-    margin: 10px 0 5px;
-  
-}
-
-input[type="text"],
-textarea {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 14px;
-}
-
-textarea {
-    resize: vertical;
-}
-
-input[type="checkbox"] {
-    margin-right: 5px;
-    transform: scale(1.5); 
-}
-
-.modal-content h2 {
-    font-size: 1.5em;
-    margin-bottom: 20px;
-}
-
 </style>
 </body>
 </html>

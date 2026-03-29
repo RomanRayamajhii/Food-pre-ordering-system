@@ -74,7 +74,7 @@ foreach ($_SESSION['cart'] as $item_id => $quantity) {
   <form id="checkoutForm" action="process_order.php" method="POST">
     <div class="form-group">
         <label>Preferred Date & Time:</label>
-        <input type="text" name="preferred_time" id="preferred_time" placeholder="Select Date and Time" required>
+        <input type="text" name="preferred_time" id="preferred_time" placeholder="Select Date and Time" required readonly>
     </div>
     <div class="form-group">
         <label>Comments (Optional):</label>
@@ -126,7 +126,10 @@ $(document).ready(function(){
         time_24hr: false,
         minDate: "today",
         maxDate: new Date().fp_incr(15),
-        allowInput: false
+        allowInput: false,
+        onChange: function(selectedDates, dateStr, instance) {
+            $("#preferred_time").val(dateStr);
+        }
     });
 });
 

@@ -27,6 +27,12 @@ $result = $conn->query($sql);
 <head>
     <title>Order History</title>
     <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
         .container { 
             max-width: 800px; 
             margin: 20px auto; 
@@ -90,14 +96,28 @@ $result = $conn->query($sql);
         .payment-status {
             font-weight: bold;
         }
-     
+        .header-banner {
+            background: #000;
+            color: #fff;
+            text-align: center;
+            padding: 40px 0;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header-banner h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            letter-spacing: 2px;
+        }
     </style>
 </head>
 <body>
+    <div class="header-banner">
+        <h1>My Order History</h1>
+    </div>
+
     <div class="container">
         <a href="index.php" class="back-btn">Back to Home</a>
-        <h1>My Orders</h1>
-
         <?php if ($result->num_rows > 0): ?>
             <?php while ($order = $result->fetch_assoc()): ?>
                 <div class="order-card">
@@ -111,10 +131,7 @@ $result = $conn->query($sql);
                     <p><strong>Items:</strong> <?php echo $order['items']; ?></p>
                     <p><strong>Total Amount:</strong> Rs. <?php echo number_format($order['total_amount'], 2); ?></p>
                     <p><strong>Preferred Time:</strong> <?php echo htmlspecialchars($order['preferred_time']); ?></p>
-                    <p><strong>Comment:</strong> <?php echo htmlspecialchars($order['comment'] ?? 'N/A'); ?></p>
-                    <?php if ($order['comments']): ?>
-                        <p><strong>Comments:</strong> <?php echo htmlspecialchars($order['comments']); ?></p>
-                    <?php endif; ?>
+                    <p><strong>Comments:</strong> <?php echo htmlspecialchars($order['comments'] ?: 'N/A'); ?></p>
                     <div class="payment-info">
                         <span class="payment-method">Payment Method: <?php echo ucfirst($order['payment_method'] ?? 'cash'); ?></span><br>
                         <span class="payment-status">Payment Status: <?php echo ucfirst($order['payment_status'] ?? 'pending'); ?></span>

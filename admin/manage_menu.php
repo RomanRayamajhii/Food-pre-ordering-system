@@ -105,6 +105,11 @@ $categories_result = mysqli_query($conn, $categories_query);
                            Delete
                         </button>
                         <?php endif; ?>
+                        <!-- Toggle Status Button -->
+                        <button class="<?php echo $row['status'] ? 'deactivate-btn' : 'activate-btn'; ?>" 
+                                onclick="toggleStatus(<?php echo $row['id']; ?>, <?php echo $row['status']; ?>)">
+                            <?php echo $row['status'] ? 'Deactivate' : 'Activate'; ?>
+                        </button>
                     </td>
                 </tr>
                 <?php endwhile; ?>
@@ -277,6 +282,28 @@ $categories_result = mysqli_query($conn, $categories_query);
             });
         }
     }
+    
+    function toggleStatus(id, currentStatus) {
+        var action = currentStatus == 1 ? 'deactivate' : 'activate';
+        var message = currentStatus == 1 ? 'deactivate' : 'activate';
+        
+        if (confirm('Are you sure you want to ' + message + ' this item?')) {
+            $.ajax({
+                url: 'menu_actions.php',
+                type: 'POST',
+                data: {
+                    action: action,
+                    id: id
+                },
+                success: function(response) {
+                    location.reload(); // Reloads the page to reflect changes
+                },
+                error: function() {
+                    alert('Error updating item status.');
+                }
+            });
+        }
+    }
     </script>
 
     <style>
@@ -364,7 +391,7 @@ $categories_result = mysqli_query($conn, $categories_query);
         background-color: #f8f9fa;
     }
     .edit-btn{
-        background-color:rgb(255, 189, 47);
+        background-color: rgb(7, 123, 248);
         color: white;
         padding: 10px 20px;
         border: none;
@@ -384,6 +411,26 @@ $categories_result = mysqli_query($conn, $categories_query);
         margin: 5px 0;
         
 
+    }
+    
+    .activate-btn {
+        background-color: #28a745;
+        color: white;
+        padding: 10px 14px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin: 5px 0;
+    }
+    
+    .deactivate-btn {
+        background-color: #ffc107;
+        color: #333;
+        padding: 10px 14px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin: 5px 0;
     }
     .modal {
         display: none;

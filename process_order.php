@@ -13,8 +13,15 @@ $preferred_time = $_POST['preferred_time'];
 $comments       = $_POST['comments'] ?? '';
 $payment_method = $_POST['payment_method'];
 
+// Validate preferred time
+if (empty($preferred_time)) {
+    echo "<script>alert('Please select a preferred date and time.'); window.history.back();</script>";
+    exit();
+}
+
 // Use prepared statements to prevent SQL injection
 // Insert order with payment_status 'pending'
+
 $stmt = $conn->prepare("INSERT INTO orders (user_id, total_amount, preferred_time, comments, payment_method, payment_status) VALUES (?, ?, ?, ?, ?, 'pending')");
 $stmt->bind_param("issss", $user_id, $total_amount, $preferred_time, $comments, $payment_method);
 $stmt->execute();

@@ -64,7 +64,8 @@ CREATE TABLE  order_items (
     FOREIGN KEY (item_id) REFERENCES menu_items(id)
 );
 
-CREATE TABLE comments (
+-- Reviews table
+CREATE TABLE comments(
     id INT PRIMARY KEY AUTO_INCREMENT,
     user_id INT NOT NULL,
     comment TEXT NOT NULL,

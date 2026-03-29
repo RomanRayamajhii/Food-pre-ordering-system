@@ -110,6 +110,40 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $_SESSION['error_message'] = "Error deleting menu item: " . mysqli_error($conn);
                 }
                 break;
+
+            case 'activate':
+                if (empty($_POST['id'])) {
+                    $_SESSION['error_message'] = "Invalid item ID";
+                    header('Location: manage_menu.php');
+                    exit();
+                }
+
+                $id = mysqli_real_escape_string($conn, $_POST['id']);
+                $query = "UPDATE menu_items SET status = 1 WHERE id = '$id'";
+                
+                if (mysqli_query($conn, $query)) {
+                    $_SESSION['success_message'] = "Menu item activated successfully!";
+                } else {
+                    $_SESSION['error_message'] = "Error activating menu item: " . mysqli_error($conn);
+                }
+                break;
+
+            case 'deactivate':
+                if (empty($_POST['id'])) {
+                    $_SESSION['error_message'] = "Invalid item ID";
+                    header('Location: manage_menu.php');
+                    exit();
+                }
+
+                $id = mysqli_real_escape_string($conn, $_POST['id']);
+                $query = "UPDATE menu_items SET status = 0 WHERE id = '$id'";
+                
+                if (mysqli_query($conn, $query)) {
+                    $_SESSION['success_message'] = "Menu item deactivated successfully!";
+                } else {
+                    $_SESSION['error_message'] = "Error deactivating menu item: " . mysqli_error($conn);
+                }
+                break;
         }
     }
 }

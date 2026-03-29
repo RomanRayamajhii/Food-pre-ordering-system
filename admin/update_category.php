@@ -2,6 +2,27 @@
 session_start();
 include 'includes/config.php';
 
+// Check if ID is provided
+if (!isset($_GET['id']) || empty($_GET['id'])) {
+    $_SESSION['error_message'] = "Invalid category ID.";
+    header('Location: manage_categories.php');
+    exit();
+}
+
+$category_id = intval($_GET['id']);
+
+// Fetch category data
+$category_sql = "SELECT * FROM categories WHERE id = $category_id";
+$category_result = mysqli_query($conn, $category_sql);
+
+if (!$category_result || mysqli_num_rows($category_result) == 0) {
+    $_SESSION['error_message'] = "Category not found.";
+    header('Location: manage_categories.php');
+    exit();
+}
+
+$category = mysqli_fetch_assoc($category_result);
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $name = trim($_POST['name']);
     $description = trim($_POST['description']);
@@ -10,36 +31,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Validate inputs
     if (empty($name) || empty($description)) {
         $_SESSION['error_message'] = "Please fill in all required fields.";
-        header('Location: manage_categories.php');
+        header('Location: update_category.php?id=' . $category_id);
         exit();
     }
 
-    // Check if category name already exists
-    $check_sql = "SELECT id FROM categories WHERE name = '" . mysqli_real_escape_string($conn, $name) . "'";
+    // Check if category name already exists (excluding current category)
+    $check_sql = "SELECT id FROM categories WHERE name = '" . mysqli_real_escape_string($conn, $name) . "' AND id != $category_id";
     $check_result = mysqli_query($conn, $check_sql);
     
     if (mysqli_num_rows($check_result) > 0) {
         $_SESSION['error_message'] = "Category with this name already exists.";
-        header('Location: manage_categories.php');
+        header('Location: update_category.php?id=' . $category_id);
         exit();
     }
 
-    // Insert into database
+    // Update database
     $name = mysqli_real_escape_string($conn, $name);
     $description = mysqli_real_escape_string($conn, $description);
     $status = intval($status);
 
-    $sql = "INSERT INTO categories (name, description, status) 
-            VALUES ('$name', '$description', '$status')";
+    $sql = "UPDATE categories SET name = '$name', description = '$description', status = '$status' WHERE id = $category_id";
     
     if (mysqli_query($conn, $sql)) {
-        $_SESSION['success_message'] = "Category added successfully!";
+        $_SESSION['success_message'] = "Category updated successfully!";
+        header('Location: manage_categories.php');
+        exit();
     } else {
         $_SESSION['error_message'] = "Database error: " . mysqli_error($conn);
     }
-
-    header('Location: manage_categories.php');
-    exit();
 }
 ?>
 
@@ -48,12 +67,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Category</title>
+    <title>Update Category</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
-        <h2>Add New Category</h2>
+        <h2>Update Category</h2>
+
+        <!-- Display success message -->
+        <?php if (isset($_SESSION['success_message'])): ?>
+            <div class="success-message">
+                <?php 
+                echo $_SESSION['success_message']; 
+                unset($_SESSION['success_message']);
+                ?>
+            </div>
+        <?php endif; ?>
 
         <!-- Display error message -->
         <?php if (isset($_SESSION['error_message'])): ?>
@@ -65,26 +94,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         <?php endif; ?>
 
-        <form action="add_category.php" method="POST">
+        <form action="update_category.php?id=<?php echo $category_id; ?>" method="POST">
             <div class="form-group">
                 <label for="name">Category Name</label>
-                <input type="text" id="name" name="name" required>
+                <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($category['name']); ?>" required>
             </div>
             
             <div class="form-group">
                 <label for="description">Description</label>
-                <textarea id="description" name="description" rows="4" required></textarea>
+                <textarea id="description" name="description" rows="4" required><?php echo htmlspecialchars($category['description']); ?></textarea>
             </div>
             
             <div class="form-group">
                 <label for="status">
-                    <input type="checkbox" id="status" name="status" checked>
+                    <input type="checkbox" id="status" name="status" <?php echo $category['status'] ? 'checked' : ''; ?>>
                     Active
                 </label>
             </div>
             
             <div class="form-actions">
-                <button type="submit" class="btn-primary">Add Category</button>
+                <button type="submit" class="btn-primary">Update Category</button>
                 <a href="manage_categories.php" class="btn-secondary">Cancel</a>
             </div>
         </form>
@@ -117,6 +146,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             color: #333;
             border-bottom: 2px solid #007bff;
             padding-bottom: 10px;
+        }
+
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
         }
 
         .error-message {
@@ -156,6 +194,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         textarea {
             resize: vertical;
             min-height: 100px;
+        }
+
+        input[type="checkbox"] {
+            margin-right: 8px;
+            transform: scale(1.2);
         }
 
         .form-actions {
