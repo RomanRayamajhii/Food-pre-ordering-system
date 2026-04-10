@@ -1,0 +1,12 @@
+paypal sandbox
+romanraya44@gmail.com 
+pass : roman123
+businesstest44@gmail.com
+pass : business123
+
+// admin
+username : admin
+pass:admin123
+// user 
+username:romanraya4
+pass:roman123
