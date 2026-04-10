@@ -1,4 +1,4 @@
-<?php
+ <?php
 $order_id = $_GET['order_id'];
 $amount   = $_GET['amount'];
 $paypal_email = "businesstest44@gmail.com";
@@ -15,4 +15,4 @@ $cancel_url = "http://localhost/dummyfood2/Food-pre-ordering-system/order_histor
 <input type="hidden" name="return" value="<?php echo $return_url; ?>">
 <input type="hidden" name="cancel_return" value="<?php echo $cancel_url; ?>">
 </form>
-<script>document.getElementById('paypalForm').submit();</script>
+<script>document.getElementById('paypalForm').submit();</script> 

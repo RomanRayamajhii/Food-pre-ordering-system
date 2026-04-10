@@ -1,9 +1,9 @@
 <?php
 // Database connection
 $host = "localhost";
-$username = "root";  // default XAMPP username
-$password = "";      // default XAMPP password
-$database = "food_ordering";  // corrected database name
+$username = "root";  
+$password = "";      
+$database = "food_ordering"; 
 
 try {
     $conn = mysqli_connect($host, $username, $password, $database);

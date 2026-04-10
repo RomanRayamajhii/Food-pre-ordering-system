@@ -10,31 +10,29 @@ if (isset($_SESSION['username'])) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Trim inputs
+    
     $username = trim($_POST['username']);
     $password = trim($_POST['password']);
     
-    // Query to get user data
+    
     $sql = "SELECT * FROM users WHERE username = '$username'";
     $result = mysqli_query($conn, $sql);
     
     if (mysqli_num_rows($result) == 1) {
         $user = mysqli_fetch_assoc($result);
-        
-        // Check password (handle both hashed and plain text for backward compatibility)
         $password_match = false;
         
-        // First try hashed password comparison
+        // hashed password comparison
         if (password_verify($password, $user['password'])) {
             $password_match = true;
         }
-        // Fallback to plain text comparison (for old accounts)
+      
         elseif ($user['password'] === $password) {
             $password_match = true;
         }
         
         if ($password_match) {
-            // Set admin-specific session variables to avoid conflicts with user sessions
+            
             $_SESSION['admin_username'] = $username;
             $_SESSION['admin_user_id'] = $user['id'];
             // Also keep regular session variables for compatibility

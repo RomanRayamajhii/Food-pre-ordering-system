@@ -238,7 +238,6 @@ include 'config/db.php';
                     <i class="fas fa-shopping-cart"></i>
                     <?php if(isset($_SESSION['cart']) && count($_SESSION['cart']) > 0): ?>
                         <span class="cart-count"><?php echo array_sum($_SESSION['cart']); ?></span>
-                       
                     <?php endif; ?>
                 <?php else: ?>
                     <a href="login.php">Login</a>

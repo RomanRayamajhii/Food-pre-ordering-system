@@ -9,7 +9,7 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
-// Get all orders for the current user, including payment columns
+// Get all orders for the current user
 $sql = "SELECT o.*, 
         GROUP_CONCAT(CONCAT(mi.name, ' x', oi.quantity) SEPARATOR ', ') as items
         FROM orders o

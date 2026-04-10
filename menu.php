@@ -439,34 +439,7 @@ function searchMenu() {
 }
 
 </script>
-<!-- sort -->
- <select id="sortOption" onchange="sortItems()" 
-style="padding:10px; border-radius:5px; display:block; margin:10px auto;">
-    <option value="">Sort by</option>
-    <option value="low">Price: Low to High</option>
-    <option value="high">Price: High to Low</option>
-</select>
-<!-- sort js -->
-<script>
-    function sortItems() {
-    let option = document.getElementById("sortOption").value;
-    let sections = document.querySelectorAll('.menu-grid');
 
-    sections.forEach(grid => {
-        let items = Array.from(grid.children);
-
-        items.sort((a, b) => {
-            let priceA = parseFloat(a.querySelector('.item-price').innerText.replace('Rs. ',''));
-            let priceB = parseFloat(b.querySelector('.item-price').innerText.replace('Rs. ',''));
-
-            return option === 'low' ? priceA - priceB : priceB - priceA;
-        });
-
-        items.forEach(i => grid.appendChild(i));
-    });
-}
-
-</script>
 
 <?php
 if (empty($menu_by_category)) {

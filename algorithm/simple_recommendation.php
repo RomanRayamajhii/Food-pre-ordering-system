@@ -6,17 +6,11 @@
 
 class SimpleRecommendationSystem {
     private $conn;
-    
+    // init database connection
     public function __construct($database_connection) {
         $this->conn = $database_connection;
     }
     
-    /**
-     * Get recommendations for a user
-     * @param int $user_id The user ID
-     * @param int $limit Number of recommendations
-     * @return array Recommended items
-     */
     public function getRecommendations($user_id, $limit = 4) {
         // Check if user has any completed orders
         $has_orders = $this->userHasOrders($user_id);
@@ -32,7 +26,7 @@ class SimpleRecommendationSystem {
             // Mix popular and category items
             $all_items = array_merge($popular, $categories);
             
-            // Remove duplicates and limit
+            // Remove duplicates 
             $unique_items = [];
             foreach ($all_items as $item) {
                 if (!isset($unique_items[$item['id']])) {
@@ -55,9 +49,9 @@ class SimpleRecommendationSystem {
     }
     
     /**
-     * Get most popular items
+     * Get most popular items kati xoti order vako xa 
      */
-    public function getPopularItems($limit = 5) {
+    public function getPopularItems($limit = 4) {
         $sql = "
             SELECT mi.*, COUNT(oi.item_id) as order_count
             FROM menu_items mi
@@ -83,7 +77,7 @@ class SimpleRecommendationSystem {
     /**
      * Get popular items by category
      */
-    private function getPopularByCategory($limit = 5) {
+    private function getPopularByCategory($limit = 4) {
         $sql = "
             SELECT mi.*, c.name as category_name, COUNT(oi.item_id) as order_count
             FROM menu_items mi

@@ -93,11 +93,11 @@ foreach ($_SESSION['cart'] as $item_id => $quantity) {
             </label>
 
             <!-- PayPal -->
-            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 8px 12px; border: 2px solid #0070ba; border-radius: 8px;">
+            <!-- <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 8px 12px; border: 2px solid #0070ba; border-radius: 8px;">
                 <input type="radio" name="payment_method" value="paypal" style="accent-color: #0070ba; width: 18px; height: 18px;">
                 <img src="image/paypal.png" alt="PayPal" style="height: 32px; width: auto;">
                 <span style="font-size: 16px; font-weight: 500; color: #0070ba;">PayPal</span>
-            </label>
+            </label> -->
             <!-- eSewa -->
             <label style="display: flex; align-items: center; gap: 10px
             ; cursor: pointer; padding: 8px 
